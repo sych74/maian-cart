@@ -8,7 +8,7 @@
 		"type": "java",
 		"categories": ["apps/e-commerce", "apps/sales-and-marketing"],
 		"homepage": "http://www.maiancart.com",
-		"logo": "https://raw.githubusercontent.com/JelasticJPS/MaianCart/master/images/2.png",
+		"logo": "https://raw.githubusercontent.com/jelastic-jps/MaianCart/master/images/2.png",
 		"description": {
 			"text": "Maian Cart is a fast, robust & FREE e-commerce platform built using PHP & MySQL which has all the features you need to run your online store."
 		},
@@ -31,7 +31,7 @@
 				"ha": false
 			},
 			"deployments": [{
-					"archive": "https://raw.githubusercontent.com/JelasticJPS/MaianCart/master/dumps/maiancart.zip",
+					"archive": "https://raw.githubusercontent.com/jelastic-jps/MaianCart/master/dumps/maiancart.zip",
 					"name": "MaianCart-2.1.zip",
 					"context": "ROOT"
 				}
@@ -41,7 +41,7 @@
 					"database": {
 						"name": "maiancart",
 						"user": "maiancart",
-						"dump": "https://raw.githubusercontent.com/JelasticJPS/MaianCart/master/dumps/maiancart.sql",
+						"dump": "https://raw.githubusercontent.com/jelastic-jps/MaianCart/master/dumps/maiancart.sql",
 						"patch": "UPDATE maiancart.mc_settings SET ifolder='${env.url}' WHERE id=1"
 					}
 				}, {
@@ -86,7 +86,7 @@
 			"upload": [{
 					"nodeType": "apache2",
 					"destPath": "/usr/lib64/php/modules/ioncube_loader_lin_5.4.so",
-					"sourcePath": "https://raw.githubusercontent.com/JelasticJPS/MaianCart/master/libs/ioncube_loader_lin_5.4.so"
+					"sourcePath": "https://raw.githubusercontent.com/jelastic-jps/MaianCart/master/libs/ioncube_loader_lin_5.4.so"
 				}
 			]
 		},
