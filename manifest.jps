@@ -53,6 +53,9 @@
 						}, {
 							"pattern": ".*extension=mysql.so",
 							"replacement": "extension=mysql.so"
+						}, {
+        						"pattern": ".*extension=gd.so",
+							"replacement": "extension=gd.so"
 						}
 					]
 				}, {
