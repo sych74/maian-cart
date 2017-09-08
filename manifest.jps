@@ -4,11 +4,11 @@
 	"application": {
 		"id": "maiancart",
 		"name": "Maian Cart",
-		"version": "2.1",
+		"version": "3.3",
 		"type": "java",
 		"categories": ["apps/e-commerce", "apps/sales-and-marketing"],
 		"homepage": "http://www.maiancart.com",
-		"logo": "https://raw.githubusercontent.com/jelastic-jps/maian-cart/master/images/2.png",
+		"logo": "https://raw.githubusercontent.com/jelastic-jps/maian-cart/master/images/logo.png",
 		"description": {
 			"text": "Maian Cart is a fast, robust & FREE e-commerce platform built using PHP & MySQL which has all the features you need to run your online store."
 		},
@@ -32,7 +32,7 @@
 			},
 			"deployments": [{
 					"archive": "https://raw.githubusercontent.com/jelastic-jps/maian-cart/master/dumps/maiancart.zip",
-					"name": "MaianCart-2.1.zip",
+					"name": "MaianCart-3.3.zip",
 					"context": "ROOT"
 				}
 			],
@@ -42,10 +42,9 @@
 						"name": "maiancart",
 						"user": "maiancart",
 						"dump": "https://raw.githubusercontent.com/jelastic-jps/maian-cart/master/dumps/maiancart.sql",
-						"patch": "UPDATE maiancart.mc_settings SET ifolder='${env.url}' WHERE id=1"
+						"patch": "UPDATE maiancart.mc_settings SET ifolder='${env.url}' WHERE id=1; UPDATE maiancart.mc_settings SET cWebsite='${env.url}' WHERE id=1; UPDATE maiancart.mc_settings SET email='${user.email}' WHERE id=1;"
 					}
 				}, {
-					"restart": true,
 					"path": "/etc/php.ini",
 					"nodeType": "apache2",
 					"replacements": [{
@@ -58,7 +57,7 @@
 					]
 				}, {
 					"nodeType": "apache2",
-					"path": "/var/www/webroot/ROOT/control/connect.inc.php",
+					"path": "/var/www/webroot/ROOT/control/connect.php",
 					"replacements": [{
 							"replacement": "${nodes.mysql5.address}",
 							"pattern": "{DB_HOST}"
@@ -74,11 +73,21 @@
 						}
 					]
 				}, {
+					"restart": true,
 					"nodeType": "apache2",
-					"path": "/var/www/webroot/ROOT/admin/control/access.inc.php",
+					"path": "/var/www/webroot/ROOT/admin/control/access.php",
 					"replacements": [{
 							"replacement": "${user.appPassword}",
 							"pattern": "password"
+						}
+					]
+				}, {
+			                "restart": true,
+    					"nodeType": "mysql5",
+					"path": "/etc/my.cnf",
+					"replacements": [{
+							"replacement": "user=mysql\nsql_mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION",
+							"pattern": "user=mysql"
 						}
 					]
 				}

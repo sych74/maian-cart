@@ -1,20 +1,22 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.12
--- http://www.phpmyadmin.net
+-- version 4.7.4
+-- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Авг 18 2014 г., 08:22
--- Версия сервера: 5.6.17
--- Версия PHP: 5.4.27
+-- Время создания: Сен 08 2017 г., 07:43
+-- Версия сервера: 5.7.19
+-- Версия PHP: 7.0.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- База данных: `maiancart`
@@ -23,19 +25,106 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `mc_accounts`
+--
+
+CREATE TABLE `mc_accounts` (
+  `id` int(5) NOT NULL,
+  `name` varchar(200) NOT NULL DEFAULT '',
+  `created` date NOT NULL DEFAULT '0000-00-00',
+  `email` varchar(250) NOT NULL DEFAULT '',
+  `pass` varchar(40) NOT NULL DEFAULT '',
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `verified` enum('yes','no') NOT NULL DEFAULT 'no',
+  `timezone` varchar(50) NOT NULL DEFAULT '0',
+  `ip` text,
+  `notes` text,
+  `reason` text,
+  `system1` varchar(250) NOT NULL DEFAULT '',
+  `system2` varchar(250) NOT NULL DEFAULT '',
+  `language` varchar(100) NOT NULL DEFAULT '',
+  `currency` varchar(100) NOT NULL DEFAULT '',
+  `enablelog` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `newsletter` enum('yes','no') NOT NULL DEFAULT 'no',
+  `message` text,
+  `messageexp` date NOT NULL DEFAULT '0000-00-00',
+  `type` enum('personal','trade') NOT NULL DEFAULT 'personal',
+  `tradediscount` varchar(5) NOT NULL DEFAULT '',
+  `minqty` varchar(10) NOT NULL DEFAULT '',
+  `maxqty` varchar(10) NOT NULL DEFAULT '0',
+  `stocklevel` varchar(10) NOT NULL DEFAULT '',
+  `mincheckout` varchar(20) NOT NULL DEFAULT '0.00',
+  `trackcode` varchar(100) NOT NULL DEFAULT '',
+  `params` text,
+  `recent` text,
+  `wishtext` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_accounts_search`
+--
+
+CREATE TABLE `mc_accounts_search` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `account` int(6) NOT NULL DEFAULT '0',
+  `code` varchar(50) NOT NULL DEFAULT '',
+  `saved` date NOT NULL DEFAULT '0000-00-00',
+  `name` varchar(50) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_accounts_wish`
+--
+
+CREATE TABLE `mc_accounts_wish` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `account` int(6) NOT NULL DEFAULT '0',
+  `product` int(8) NOT NULL DEFAULT '0',
+  `saved` date NOT NULL DEFAULT '0000-00-00'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `mc_activation_history`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_activation_history` (
-  `id` int(7) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_activation_history` (
+  `id` int(7) UNSIGNED NOT NULL,
   `saleID` int(7) NOT NULL DEFAULT '0',
   `products` text,
   `restoreDate` date NOT NULL DEFAULT '0000-00-00',
   `restoreTime` time NOT NULL DEFAULT '00:00:00',
-  `adminUser` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `saleid_index` (`saleID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `adminUser` varchar(100) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_addressbook`
+--
+
+CREATE TABLE `mc_addressbook` (
+  `id` int(5) NOT NULL,
+  `account` int(8) NOT NULL DEFAULT '0',
+  `nm` varchar(250) NOT NULL DEFAULT '',
+  `em` varchar(250) NOT NULL DEFAULT '',
+  `addr1` varchar(250) NOT NULL DEFAULT '',
+  `addr2` varchar(250) NOT NULL DEFAULT '',
+  `addr3` varchar(250) NOT NULL DEFAULT '',
+  `addr4` varchar(250) NOT NULL DEFAULT '',
+  `addr5` varchar(250) NOT NULL DEFAULT '',
+  `addr6` varchar(250) NOT NULL DEFAULT '',
+  `addr7` varchar(250) NOT NULL DEFAULT '',
+  `addr8` varchar(250) NOT NULL DEFAULT '',
+  `default` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `type` enum('bill','ship') NOT NULL DEFAULT 'bill',
+  `zone` int(8) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -43,19 +132,16 @@ CREATE TABLE IF NOT EXISTS `mc_activation_history` (
 -- Структура таблицы `mc_attachments`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_attachments` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_attachments` (
+  `id` int(10) UNSIGNED NOT NULL,
   `saleID` int(7) NOT NULL DEFAULT '0',
   `statusID` int(7) NOT NULL DEFAULT '0',
   `attachFolder` varchar(100) NOT NULL DEFAULT '',
   `fileName` varchar(100) NOT NULL DEFAULT '',
   `fileType` varchar(100) NOT NULL DEFAULT '',
   `fileSize` varchar(100) NOT NULL DEFAULT '',
-  `isSaved` enum('yes','no') NOT NULL DEFAULT 'no',
-  PRIMARY KEY (`id`),
-  KEY `status_index` (`statusID`),
-  KEY `sale_index` (`saleID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `isSaved` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -63,37 +149,16 @@ CREATE TABLE IF NOT EXISTS `mc_attachments` (
 -- Структура таблицы `mc_attributes`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_attributes` (
-  `id` int(7) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_attributes` (
+  `id` int(7) NOT NULL,
   `productID` int(10) NOT NULL DEFAULT '0',
   `attrGroup` int(10) NOT NULL DEFAULT '0',
   `attrName` varchar(100) NOT NULL DEFAULT '',
   `attrCost` varchar(50) NOT NULL DEFAULT '',
   `attrStock` int(10) NOT NULL DEFAULT '0',
   `attrWeight` varchar(50) NOT NULL DEFAULT '',
-  `orderBy` int(7) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `prod_index` (`productID`),
-  KEY `group_index` (`attrGroup`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
-
---
--- Дамп данных таблицы `mc_attributes`
---
-
-INSERT INTO `mc_attributes` (`id`, `productID`, `attrGroup`, `attrName`, `attrCost`, `attrStock`, `attrWeight`, `orderBy`) VALUES
-(1, 4, 1, '12inch', '12.99', 50, '200', 1),
-(2, 4, 1, '15inch', '22.99', 50, '200', 2),
-(3, 4, 1, '17inch', '32.99', 50, '200', 3),
-(4, 4, 2, 'Carry Case', '9.99', 50, '500', 1),
-(5, 4, 2, 'Logitech Wireless Mouse', '19.99', 50, '500', 2),
-(6, 4, 2, 'Free Insurance', '0.00', 50, '0', 3),
-(7, 6, 3, '10', '0.00', 50, '0', 1),
-(8, 6, 3, '14', '0.00', 50, '0', 2),
-(9, 6, 3, '16', '0.00', 50, '0', 3),
-(10, 6, 4, 'Pink', '0.00', 50, '0', 1),
-(11, 6, 4, 'Red', '0.00', 50, '0', 2),
-(12, 6, 4, 'Blue', '0.00', 50, '0', 3);
+  `orderBy` int(7) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -101,26 +166,14 @@ INSERT INTO `mc_attributes` (`id`, `productID`, `attrGroup`, `attrName`, `attrCo
 -- Структура таблицы `mc_attr_groups`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_attr_groups` (
-  `id` int(7) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_attr_groups` (
+  `id` int(7) NOT NULL,
   `productID` int(10) NOT NULL DEFAULT '0',
   `groupName` varchar(100) NOT NULL DEFAULT '',
   `orderBy` int(7) NOT NULL DEFAULT '0',
   `allowMultiple` enum('yes','no') NOT NULL DEFAULT 'no',
-  `isRequired` enum('yes','no') NOT NULL DEFAULT 'no',
-  PRIMARY KEY (`id`),
-  KEY `prod_index` (`productID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- Дамп данных таблицы `mc_attr_groups`
---
-
-INSERT INTO `mc_attr_groups` (`id`, `productID`, `groupName`, `orderBy`, `allowMultiple`, `isRequired`) VALUES
-(1, 4, 'Screen Size', 1, 'no', 'no'),
-(2, 4, 'Accessories', 2, 'no', 'no'),
-(3, 6, 'Size', 3, 'no', 'yes'),
-(4, 6, 'Colour', 4, 'no', 'yes');
+  `isRequired` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -128,8 +181,8 @@ INSERT INTO `mc_attr_groups` (`id`, `productID`, `groupName`, `orderBy`, `allowM
 -- Структура таблицы `mc_banners`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_banners` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_banners` (
+  `id` int(4) UNSIGNED NOT NULL,
   `bannerFile` varchar(250) NOT NULL DEFAULT '0',
   `bannerText` varchar(250) NOT NULL DEFAULT '0',
   `bannerUrl` varchar(250) NOT NULL DEFAULT '0',
@@ -139,17 +192,53 @@ CREATE TABLE IF NOT EXISTS `mc_banners` (
   `bannerHome` enum('yes','no') NOT NULL DEFAULT 'no',
   `bannerFrom` date NOT NULL DEFAULT '0000-00-00',
   `bannerTo` date NOT NULL DEFAULT '0000-00-00',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+  `trade` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
 
 --
--- Дамп данных таблицы `mc_banners`
+-- Структура таблицы `mc_blog`
 --
 
-INSERT INTO `mc_banners` (`id`, `bannerFile`, `bannerText`, `bannerUrl`, `bannerLive`, `bannerOrder`, `bannerCats`, `bannerHome`, `bannerFrom`, `bannerTo`) VALUES
-(1, 'banner-3.png', 'TELEVISIONS - ALL THE LATEST DEALS INSTORE', '', 'yes', 3, '', 'yes', '0000-00-00', '0000-00-00'),
-(2, 'banner-1.png', 'MOBILE PHONES - ALL THE LATEST DEALS INSTORE', '', 'yes', 1, '', 'yes', '0000-00-00', '0000-00-00'),
-(3, 'banner-2.png', 'LAPTOPS - ALL THE LATEST DEALS INSTORE', '', 'yes', 2, '', 'yes', '0000-00-00', '0000-00-00');
+CREATE TABLE `mc_blog` (
+  `id` int(7) NOT NULL,
+  `title` text,
+  `message` text,
+  `created` int(13) NOT NULL DEFAULT '0',
+  `published` int(13) NOT NULL DEFAULT '0',
+  `autodelete` int(13) NOT NULL DEFAULT '0',
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_boxes`
+--
+
+CREATE TABLE `mc_boxes` (
+  `id` tinyint(1) NOT NULL,
+  `ident` varchar(250) NOT NULL DEFAULT '',
+  `name` varchar(250) NOT NULL DEFAULT '',
+  `status` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `tmp` varchar(250) NOT NULL DEFAULT '',
+  `orderby` int(8) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `mc_boxes`
+--
+
+INSERT INTO `mc_boxes` (`id`, `ident`, `name`, `status`, `tmp`, `orderby`) VALUES
+(1, 'points', 'Price Points', 'yes', '', 1),
+(2, 'popular', 'Most Popular Products', 'yes', '', 3),
+(3, 'tweets', 'Latest Tweets', 'yes', '', 5),
+(4, 'recent', 'Most Recently Viewed', 'yes', '', 4),
+(5, 'links', 'Other Links', 'yes', '', 8),
+(6, 'brands', 'Brands', 'yes', '', 2),
+(7, 'rss', 'News', 'yes', '', 6),
+(8, '', 'Custom Link', 'yes', 'box-example.tpl.php', 7);
 
 -- --------------------------------------------------------
 
@@ -157,24 +246,13 @@ INSERT INTO `mc_banners` (`id`, `bannerFile`, `bannerText`, `bannerUrl`, `banner
 -- Структура таблицы `mc_brands`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_brands` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_brands` (
+  `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(250) NOT NULL DEFAULT '',
   `bCat` varchar(50) NOT NULL DEFAULT 'all',
   `enBrand` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `rwslug` varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- Дамп данных таблицы `mc_brands`
---
-
-INSERT INTO `mc_brands` (`id`, `name`, `bCat`, `enBrand`, `rwslug`) VALUES
-(1, 'Acer', '1', 'yes', ''),
-(2, 'HTC', '1', 'yes', ''),
-(3, 'Samsung', '1', 'yes', ''),
-(4, 'Berghaus', '3', 'yes', '');
+  `rwslug` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -182,8 +260,8 @@ INSERT INTO `mc_brands` (`id`, `name`, `bCat`, `enBrand`, `rwslug`) VALUES
 -- Структура таблицы `mc_campaigns`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_campaigns` (
-  `id` mediumint(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_campaigns` (
+  `id` mediumint(10) UNSIGNED NOT NULL,
   `cName` varchar(250) NOT NULL DEFAULT '',
   `cDiscountCode` varchar(50) NOT NULL DEFAULT '',
   `cMin` varchar(50) NOT NULL DEFAULT '0.00',
@@ -192,10 +270,8 @@ CREATE TABLE IF NOT EXISTS `mc_campaigns` (
   `cDiscount` varchar(20) NOT NULL DEFAULT '',
   `cAdded` date DEFAULT '0000-00-00',
   `cLive` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `categories` text,
-  PRIMARY KEY (`id`),
-  KEY `code_index` (`cDiscountCode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `categories` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -203,8 +279,8 @@ CREATE TABLE IF NOT EXISTS `mc_campaigns` (
 -- Структура таблицы `mc_categories`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_categories` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_categories` (
+  `id` int(10) UNSIGNED NOT NULL,
   `catname` varchar(250) NOT NULL,
   `titleBar` varchar(250) NOT NULL DEFAULT '',
   `comments` text,
@@ -220,21 +296,8 @@ CREATE TABLE IF NOT EXISTS `mc_categories` (
   `showRelated` enum('yes','no') NOT NULL DEFAULT 'yes',
   `rwslug` varchar(250) NOT NULL DEFAULT '',
   `theme` varchar(200) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cat_index` (`catLevel`),
-  KEY `child_index` (`childOf`),
-  KEY `en_index` (`enCat`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- Дамп данных таблицы `mc_categories`
---
-
-INSERT INTO `mc_categories` (`id`, `catname`, `titleBar`, `comments`, `catLevel`, `childOf`, `metaDesc`, `metaKeys`, `enCat`, `orderBy`, `enDisqus`, `freeShipping`, `imgIcon`, `showRelated`, `rwslug`, `theme`) VALUES
-(1, 'Electronic Items', '', 'Electronic Items for sale', 1, 0, 'electronic description', 'electronic keywords', 'yes', 1, 'no', 'no', 'demoicon1.jpg', 'yes', '', ''),
-(2, 'CDs', '', 'CDs for sale', 1, 0, 'cd desc', 'cd keywords', 'yes', 2, 'no', 'no', 'demoicon2.gif', 'yes', '', ''),
-(3, 'Clothes', '', 'Clothes for sale', 1, 0, 'clothes desc', 'clothes keywords', 'yes', 3, 'no', 'no', 'demoicon3.gif', 'yes', '', ''),
-(4, 'Downloads', '', 'Downloads for sale', 1, 0, 'downloads desc', 'instant download', 'yes', 4, 'no', 'no', 'demoicon4.gif', 'yes', '', '');
+  `vis` varchar(30) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -242,17 +305,15 @@ INSERT INTO `mc_categories` (`id`, `catname`, `titleBar`, `comments`, `catLevel`
 -- Структура таблицы `mc_click_history`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_click_history` (
-  `id` int(7) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_click_history` (
+  `id` int(7) UNSIGNED NOT NULL,
   `saleID` int(7) NOT NULL DEFAULT '0',
   `purchaseID` int(7) NOT NULL DEFAULT '0',
   `productID` int(7) NOT NULL DEFAULT '0',
   `clickDate` date NOT NULL DEFAULT '0000-00-00',
   `clickTime` time NOT NULL DEFAULT '00:00:00',
-  `clickIP` varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `saleid_index` (`saleID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `clickIP` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -260,16 +321,12 @@ CREATE TABLE IF NOT EXISTS `mc_click_history` (
 -- Структура таблицы `mc_comparisons`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_comparisons` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_comparisons` (
+  `id` int(10) UNSIGNED NOT NULL,
   `saleID` int(7) NOT NULL DEFAULT '0',
   `thisProduct` int(7) NOT NULL DEFAULT '0',
-  `thatProduct` int(7) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `sale_index` (`saleID`),
-  KEY `this_index` (`thisProduct`),
-  KEY `that_index` (`thatProduct`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `thatProduct` int(7) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -277,261 +334,261 @@ CREATE TABLE IF NOT EXISTS `mc_comparisons` (
 -- Структура таблицы `mc_countries`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_countries` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_countries` (
+  `id` int(4) UNSIGNED NOT NULL,
   `cName` varchar(250) NOT NULL DEFAULT '',
   `cISO` varchar(3) NOT NULL,
   `cISO_2` char(2) NOT NULL DEFAULT '',
   `iso4217` varchar(50) NOT NULL DEFAULT '0',
-  `enCountry` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `enCountry` enum('yes','no') NOT NULL DEFAULT 'no',
   `localPickup` enum('yes','no') NOT NULL DEFAULT 'no',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=265 ;
+  `freeship` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `mc_countries`
 --
 
-INSERT INTO `mc_countries` (`id`, `cName`, `cISO`, `cISO_2`, `iso4217`, `enCountry`, `localPickup`) VALUES
-(1, 'Afghanistan', 'AFG', 'AF', '004', 'no', 'no'),
-(2, 'Albania', 'ALB', 'AL', '008', 'no', 'no'),
-(3, 'Algeria', 'DZA', 'DZ', '012', 'no', 'no'),
-(4, 'Andorra', 'AND', 'AD', '020', 'no', 'no'),
-(5, 'Angola', 'AGO', 'AO', '024', 'no', 'no'),
-(6, 'Antigua and Barbuda', 'ATG', 'AG', '028', 'no', 'no'),
-(7, 'Argentina', 'ARG', 'AR', '032', 'no', 'no'),
-(8, 'Armenia', 'ARM', 'AM', '051', 'no', 'no'),
-(9, 'Australia', 'AUS', 'AU', '036', 'no', 'no'),
-(10, 'Austria', 'AUT', 'AT', '040', 'no', 'no'),
-(11, 'Azerbaijan', 'AZE', 'AZ', '031', 'no', 'no'),
-(12, 'Bahamas', 'BHS', 'BS', '044', 'no', 'no'),
-(13, 'Bahrain', 'BHR', 'BH', '048', 'no', 'no'),
-(14, 'Bangladesh', 'BGD', 'BD', '050', 'no', 'no'),
-(15, 'Barbados', 'BRB', 'BB', '052', 'no', 'no'),
-(16, 'Belarus', 'BLR', 'BY', '112', 'no', 'no'),
-(17, 'Belgium', 'BEL', 'BE', '056', 'no', 'no'),
-(18, 'Belize', 'BLZ', 'BZ', '084', 'no', 'no'),
-(19, 'Benin', 'BEN', 'BJ', '204', 'no', 'no'),
-(20, 'Bhutan', 'BTN', 'BT', '064', 'no', 'no'),
-(21, 'Bolivia', 'BOL', 'BO', '068', 'no', 'no'),
-(22, 'Bosnia and Herzegovina', 'BIH', 'BA', '070', 'no', 'no'),
-(23, 'Botswana', 'BWA', 'BW', '072', 'no', 'no'),
-(24, 'Brazil', 'BRA', 'BR', '076', 'no', 'no'),
-(25, 'Brunei', 'BRN', 'BN', '096', 'no', 'no'),
-(26, 'Bulgaria', 'BGR', 'BG', '100', 'no', 'no'),
-(27, 'Burkina Faso', 'BFA', 'BF', '854', 'no', 'no'),
-(28, 'Burundi', 'BDI', 'BI', '108', 'no', 'no'),
-(29, 'Cambodia', 'KHM', 'KH', '116', 'no', 'no'),
-(30, 'Cameroon', 'CMR', 'CM', '120', 'no', 'no'),
-(31, 'Canada', 'CAN', 'CA', '124', 'no', 'no'),
-(32, 'Cape Verde', 'CPV', 'CV', '132', 'no', 'no'),
-(33, 'Central African Republic', 'CAF', 'CF', '140', 'no', 'no'),
-(34, 'Chad', 'TCD', 'TD', '148', 'no', 'no'),
-(35, 'Chile', 'CHL', 'CL', '152', 'no', 'no'),
-(36, 'China', 'CHN', 'CN', '156', 'no', 'no'),
-(37, 'Colombia', 'COL', 'CO', '170', 'no', 'no'),
-(38, 'Comoros', 'COM', 'KM', '174', 'no', 'no'),
-(39, 'Congo', 'COG', 'CG', '178', 'no', 'no'),
-(41, 'Costa Rica', 'CRI', 'CK', '184', 'no', 'no'),
-(42, 'Cote d''Ivoire', 'CIV', 'CR', '188', 'no', 'no'),
-(43, 'Croatia', 'HRV', 'CI', '384', 'no', 'no'),
-(44, 'Cuba', 'CUB', 'HR', '191', 'no', 'no'),
-(45, 'Cyprus', 'CYP', 'CU', '192', 'no', 'no'),
-(46, 'Czech Republic', 'CZE', 'CY', '196', 'no', 'no'),
-(47, 'Denmark', 'DNK', 'DK', '208', 'no', 'no'),
-(48, 'Djibouti', 'DJI', 'DJ', '262', 'no', 'no'),
-(49, 'Dominica', 'DMA', 'DM', '212', 'no', 'no'),
-(50, 'Dominican Republic', 'DOM', 'DO', '214', 'no', 'no'),
-(51, 'Ecuador', 'ECU', 'EC', '218', 'no', 'no'),
-(52, 'Egypt', 'EGY', 'EG', '818', 'no', 'no'),
-(53, 'El Salvador', 'SLV', 'SV', '222', 'no', 'no'),
-(54, 'Equatorial Guinea', 'GNQ', 'GQ', '226', 'no', 'no'),
-(55, 'Eritrea', 'ERI', 'ER', '232', 'no', 'no'),
-(56, 'Estonia', 'EST', 'EE', '233', 'no', 'no'),
-(57, 'Ethiopia', 'ETH', 'ET', '231', 'no', 'no'),
-(58, 'Fiji', 'FJI', 'FJ', '242', 'no', 'no'),
-(59, 'Finland', 'FIN', 'FI', '246', 'no', 'no'),
-(60, 'France', 'FRA', 'FR', '250', 'no', 'no'),
-(61, 'Gabon', 'GAB', 'GA', '266', 'no', 'no'),
-(62, 'Gambia', 'GMB', 'GM', '270', 'no', 'no'),
-(63, 'Georgia', 'GEO', 'GE', '268', 'no', 'no'),
-(64, 'Germany', 'DEU', 'DE', '276', 'no', 'no'),
-(65, 'Ghana', 'GHA', 'GH', '288', 'no', 'no'),
-(66, 'Greece', 'GRC', 'GR', '300', 'no', 'no'),
-(67, 'Grenada', 'GRD', 'GD', '308', 'no', 'no'),
-(68, 'Guatemala', 'GTM', 'GT', '320', 'no', 'no'),
-(69, 'Guinea', 'GIN', 'GN', '324', 'no', 'no'),
-(70, 'Guinea-Bissau', 'GNB', 'GW', '624', 'no', 'no'),
-(71, 'Guyana', 'GUY', 'GY', '328', 'no', 'no'),
-(72, 'Haiti', 'HTI', 'HT', '332', 'no', 'no'),
-(73, 'Honduras', 'HND', 'HN', '340', 'no', 'no'),
-(74, 'Hungary', 'HUN', 'HU', '348', 'no', 'no'),
-(75, 'Iceland', 'ISL', 'IS', '352', 'no', 'no'),
-(76, 'India', 'IND', 'IN', '356', 'no', 'no'),
-(77, 'Indonesia', 'IDN', 'ID', '360', 'no', 'no'),
-(78, 'Iran', 'IRN', 'IR', '364', 'no', 'no'),
-(79, 'Iraq', 'IRQ', 'IQ', '368', 'no', 'no'),
-(80, 'Ireland', 'IRL', 'IE', '372', 'no', 'no'),
-(81, 'Israel', 'ISR', 'IL', '376', 'no', 'no'),
-(82, 'Italy', 'ITA', 'IT', '380', 'no', 'no'),
-(83, 'Jamaica', 'JAM', 'JM', '388', 'no', 'no'),
-(84, 'Japan', 'JPN', 'JP', '392', 'no', 'no'),
-(85, 'Jordan', 'JOR', 'JO', '400', 'no', 'no'),
-(86, 'Kazakhstan', 'KAZ', 'KZ', '398', 'no', 'no'),
-(87, 'Kenya', 'KEN', 'KE', '404', 'no', 'no'),
-(88, 'Kiribati', 'KIR', 'KI', '296', 'no', 'no'),
-(89, 'South Korea', 'KOR', 'KR', '410', 'no', 'no'),
-(90, 'North Korea', 'PRK', 'KP', '408', 'no', 'no'),
-(91, 'Kuwait', 'KWT', 'KW', '414', 'no', 'no'),
-(92, 'Kyrgyzstan', 'KGZ', 'KG', '417', 'no', 'no'),
-(93, 'Laos', 'LAO', 'LA', '418', 'no', 'no'),
-(94, 'Latvia', 'LVA', 'LV', '428', 'no', 'no'),
-(95, 'Lebanon', 'LBN', 'LB', '422', 'no', 'no'),
-(96, 'Lesotho', 'LSO', 'LS', '426', 'no', 'no'),
-(97, 'Liberia', 'LBR', 'LR', '430', 'no', 'no'),
-(98, 'Libya', 'LBY', 'LY', '434', 'no', 'no'),
-(99, 'Liechtenstein', 'LIE', 'LI', '438', 'no', 'no'),
-(100, 'Lithuania', 'LTU', 'LT', '440', 'no', 'no'),
-(101, 'Luxembourg', 'LUX', 'LU', '442', 'no', 'no'),
-(102, 'Macedonia', 'MKD', 'MK', '807', 'no', 'no'),
-(103, 'Madagascar', 'MDG', 'MG', '450', 'no', 'no'),
-(104, 'Malawi', 'MWI', 'MW', '454', 'no', 'no'),
-(105, 'Malaysia', 'MYS', 'MY', '458', 'no', 'no'),
-(106, 'Maldives', 'MDV', 'MV', '462', 'no', 'no'),
-(107, 'Mali', 'MLI', 'ML', '466', 'no', 'no'),
-(108, 'Malta', 'MLT', 'MT', '470', 'no', 'no'),
-(109, 'Marshall Islands', 'MHL', 'MH', '584', 'no', 'no'),
-(110, 'Mauritania', 'MRT', 'MR', '478', 'no', 'no'),
-(111, 'Mauritius', 'MUS', 'MU', '480', 'no', 'no'),
-(112, 'Mexico', 'MEX', 'MX', '484', 'no', 'no'),
-(113, 'Micronesia', 'FSM', 'FM', '583', 'no', 'no'),
-(114, 'Moldova', 'MDA', 'MD', '498', 'no', 'no'),
-(115, 'Monaco', 'MCO', 'MC', '492', 'no', 'no'),
-(116, 'Mongolia', 'MNG', 'MN', '496', 'no', 'no'),
-(117, 'Montenegro', 'MNE', 'ME', '499', 'no', 'no'),
-(118, 'Morocco', 'MAR', 'MA', '504', 'no', 'no'),
-(119, 'Mozambique', 'MOZ', 'MZ', '508', 'no', 'no'),
-(120, 'Myanmar (Burma)', 'MMR', 'MM', '104', 'no', 'no'),
-(121, 'Namibia', 'NAM', 'NA', '516', 'no', 'no'),
-(122, 'Nauru', 'NRU', 'NR', '520', 'no', 'no'),
-(123, 'Nepal', 'NPL', 'NP', '524', 'no', 'no'),
-(124, 'Netherlands', 'NLD', 'NL', '528', 'no', 'no'),
-(125, 'New Zealand', 'NZL', 'NZ', '554', 'no', 'no'),
-(126, 'Nicaragua', 'NIC', 'NI', '558', 'no', 'no'),
-(127, 'Niger', 'NER', 'NE', '562', 'no', 'no'),
-(128, 'Nigeria', 'NGA', 'NG', '566', 'no', 'no'),
-(129, 'Norway', 'NOR', 'NO', '578', 'no', 'no'),
-(130, 'Oman', 'OMN', 'OM', '512', 'no', 'no'),
-(131, 'Pakistan', 'PAK', 'PK', '586', 'no', 'no'),
-(132, 'Palau', 'PLW', 'PW', '585', 'no', 'no'),
-(133, 'Panama', 'PAN', 'PA', '591', 'no', 'no'),
-(134, 'Papua New Guinea', 'PNG', 'PG', '598', 'no', 'no'),
-(135, 'Paraguay', 'PRY', 'PY', '600', 'no', 'no'),
-(136, 'Peru', 'PER', 'PE', '604', 'no', 'no'),
-(137, 'Philippines', 'PHL', 'PH', '608', 'no', 'no'),
-(138, 'Poland', 'POL', 'PL', '616', 'no', 'no'),
-(139, 'Portugal', 'PRT', 'PT', '620', 'no', 'no'),
-(140, 'Qatar', 'QAT', 'QA', '634', 'no', 'no'),
-(141, 'Romania', 'ROU', 'RO', '642', 'no', 'no'),
-(142, 'Russian Federation', 'RUS', 'RU', '643', 'no', 'no'),
-(143, 'Rwanda', 'RWA', 'RW', '646', 'no', 'no'),
-(144, 'Saint Kitts and Nevis', 'KNA', 'KN', '659', 'no', 'no'),
-(145, 'Saint Lucia', 'LCA', 'LC', '662', 'no', 'no'),
-(146, 'Saint Vincent and the Grenadines', 'VCT', 'VC', '670', 'no', 'no'),
-(147, 'Samoa', 'WSM', 'WS', '882', 'no', 'no'),
-(148, 'San Marino', 'SMR', 'SM', '674', 'no', 'no'),
-(149, 'Sao Tome and Principe', 'STP', 'ST', '678', 'no', 'no'),
-(150, 'Saudi Arabia', 'SAU', 'SA', '682', 'no', 'no'),
-(151, 'Senegal', 'SEN', 'SN', '686', 'no', 'no'),
-(152, 'Serbia', 'SRB', 'RS', '688', 'no', 'no'),
-(153, 'Seychelles', 'SYC', 'SC', '690', 'no', 'no'),
-(154, 'Sierra Leone', 'SLE', 'SL', '694', 'no', 'no'),
-(155, 'Singapore', 'SGP', 'SG', '702', 'no', 'no'),
-(156, 'Slovakia', 'SVK', 'SK', '703', 'no', 'no'),
-(157, 'Slovenia', 'SVN', 'SI', '705', 'no', 'no'),
-(159, 'Somalia', 'SOM', 'SO', '706', 'no', 'no'),
-(160, 'South Africa', '+27', 'ZA', '710', 'no', 'no'),
-(161, 'Spain', 'ESP', 'ES', '724', 'no', 'no'),
-(162, 'Sri Lanka', 'LKA', 'LK', '144', 'no', 'no'),
-(163, 'Sudan', 'SDN', 'SD', '736', 'no', 'no'),
-(164, 'Suriname', 'SUR', 'SR', '740', 'no', 'no'),
-(165, 'Swaziland', 'SWZ', 'SZ', '748', 'no', 'no'),
-(166, 'Sweden', 'SWE', 'SE', '752', 'no', 'no'),
-(167, 'Switzerland', 'CHE', 'CH', '756', 'no', 'no'),
-(168, 'Syrian Arab Republic', 'SYR', 'SY', '760', 'no', 'no'),
-(169, 'Tajikistan', 'TJK', 'TJ', '762', 'no', 'no'),
-(170, 'Tanzania', 'TZA', 'TZ', '834', 'no', 'no'),
-(171, 'Thailand', 'THA', 'TH', '764', 'no', 'no'),
-(172, 'Timor-Leste (East Timor)', 'TLS', 'TL', '626', 'no', 'no'),
-(173, 'Togo', 'TGO', 'TG', '768', 'no', 'no'),
-(174, 'Tonga', 'TON', 'TO', '776', 'no', 'no'),
-(175, 'Trinidad and Tobago', 'TTO', 'TT', '780', 'no', 'no'),
-(176, 'Tunisia', 'TUN', 'TN', '788', 'no', 'no'),
-(177, 'Turkey', 'TUR', 'TR', '792', 'no', 'no'),
-(178, 'Turkmenistan', 'TKM', 'TM', '795', 'no', 'no'),
-(179, 'Tuvalu', 'TUV', 'TV', '798', 'no', 'no'),
-(180, 'Uganda', 'UGA', 'UG', '800', 'no', 'no'),
-(181, 'Ukraine', 'UKR', 'UA', '804', 'no', 'no'),
-(182, 'United Arab Emirates', 'ARE', 'AE', '784', 'no', 'no'),
-(183, 'United Kingdom', 'GBR', 'GB', '826', 'yes', 'yes'),
-(184, 'United States', 'USA', 'US', '840', 'yes', 'yes'),
-(185, 'Uruguay', 'URY', 'UY', '858', 'no', 'no'),
-(186, 'Uzbekistan', 'UZB', 'UZ', '860', 'no', 'no'),
-(187, 'Vanuatu', 'VUT', 'VU', '548', 'no', 'no'),
-(188, 'Vatican City', 'VAT', 'VA', '336', 'no', 'no'),
-(189, 'Venezuela', 'VEN', 'VE', '862', 'no', 'no'),
-(190, 'Vietnam', 'VNM', 'VN', '704', 'no', 'no'),
-(191, 'Yemen', 'YEM', 'YE', '887', 'no', 'no'),
-(192, 'Zambia', 'ZMB', 'ZM', '894', 'no', 'no'),
-(193, 'Zimbabwe', 'ZWE', 'ZW', '716', 'no', 'no'),
-(202, 'Christmas Island', 'CXR', 'CX', '162', 'no', 'no'),
-(203, 'Cocos (Keeling) Islands', 'CCK', 'CC', '166', 'no', 'no'),
-(205, 'Heard Island and McDonald Islands', 'HMD', 'HM', '334', 'no', 'no'),
-(206, 'Norfolk Island', 'NFK', 'NF', '574', 'no', 'no'),
-(207, 'New Caledonia', 'NCL', 'NC', '540', 'no', 'no'),
-(208, 'French Polynesia', 'PYF', 'PF', '258', 'no', 'no'),
-(209, 'Mayotte', 'MYT', 'YT', '175', 'no', 'no'),
-(210, 'Saint Barthelemy', 'GLP', 'BL', '652', 'no', 'no'),
-(211, 'Saint Martin', 'GLP', 'MF', '663', 'no', 'no'),
-(212, 'Saint Pierre and Miquelon', 'SPM', 'PM', '666', 'no', 'no'),
-(213, 'Wallis and Futuna', 'WLF', 'WF', '876', 'no', 'no'),
-(214, 'French Southern and Antarctic Lands', 'ATF', 'TF', '260', 'no', 'no'),
-(216, 'Bouvet Island', 'BVT', 'BV', '074', 'no', 'no'),
-(217, 'Cook Islands', 'COK', 'CD', '180', 'no', 'no'),
-(218, 'Niue', 'NIU', 'NU', '570', 'no', 'no'),
-(219, 'Tokelau', 'TKL', 'TK', '772', 'no', 'no'),
-(220, 'Guernsey', 'GGY', 'GG', '831', 'no', 'no'),
-(221, 'Isle of Man', 'IMN', 'IM', '833', 'no', 'no'),
-(222, 'Jersey', 'JEY', 'JE', '832', 'no', 'no'),
-(223, 'Anguilla', 'AIA', 'AI', '660', 'no', 'no'),
-(224, 'Bermuda', 'BMU', 'BM', '060', 'no', 'no'),
-(225, 'British Indian Ocean Territory', 'IOT', 'IO', '086', 'no', 'no'),
-(227, 'British Virgin Islands', 'VGB', 'VG', '092', 'no', 'no'),
-(228, 'Cayman Islands', 'CYM', 'KY', '136', 'no', 'no'),
-(229, 'Falkland Islands (Islas Malvinas)', 'FLK', 'FK', '238', 'no', 'no'),
-(230, 'Gibraltar', 'GIB', 'GI', '292', 'no', 'no'),
-(231, 'Montserrat', 'MSR', 'MS', '500', 'no', 'no'),
-(232, 'Pitcairn Islands', 'PCN', 'PN', '612', 'no', 'no'),
-(233, 'Saint Helena', 'SHN', 'SH', '654', 'no', 'no'),
-(234, 'South Georgia & South Sandwich Islands', 'SGS', 'GS', '239', 'no', 'no'),
-(235, 'Turks and Caicos Islands', 'TCA', 'TC', '796', 'no', 'no'),
-(236, 'Northern Mariana Islands', 'MNP', 'MP', '580', 'no', 'no'),
-(237, 'Puerto Rico', 'PRI', 'PR', '630', 'no', 'no'),
-(238, 'American Samoa', 'ASM', 'AS', '016', 'no', 'no'),
-(240, 'Guam', 'GUM', 'GU', '316', 'no', 'no'),
-(248, 'US Virgin Islands', 'VIR', 'VI', '850', 'no', 'no'),
-(250, 'Hong Kong', 'HKG', 'HK', '344', 'no', 'no'),
-(251, 'Macau', 'MAC', 'MO', '446', 'no', 'no'),
-(252, 'Faroe Islands', 'FRO', 'FO', '234', 'no', 'no'),
-(253, 'Greenland', 'GRL', 'GL', '304', 'no', 'no'),
-(254, 'French Guiana', 'GUF', 'GF', '254', 'no', 'no'),
-(255, 'Guadeloupe', 'GLP', 'GP', '312', 'no', 'no'),
-(256, 'Martinique', 'MTQ', 'MQ', '474', 'no', 'no'),
-(257, 'Reunion', 'REU', 'RE', '638', 'no', 'no'),
-(259, 'Aruba', 'ABW', 'AW', '533', 'no', 'no'),
-(260, 'Netherlands Antilles', 'ANT', 'AN', '530', 'no', 'no'),
-(261, 'Svalbard and Jan Mayen', 'SJM', 'SJ', '744', 'no', 'no'),
-(264, 'Australian Antarctic Territory', 'ATA', 'AQ', '010', 'no', 'no');
+INSERT INTO `mc_countries` (`id`, `cName`, `cISO`, `cISO_2`, `iso4217`, `enCountry`, `localPickup`, `freeship`) VALUES
+(1, 'Afghanistan', 'AFG', 'AF', '004', 'no', 'no', 'no'),
+(2, 'Albania', 'ALB', 'AL', '008', 'no', 'no', 'no'),
+(3, 'Algeria', 'DZA', 'DZ', '012', 'no', 'no', 'no'),
+(4, 'Andorra', 'AND', 'AD', '020', 'no', 'no', 'no'),
+(5, 'Angola', 'AGO', 'AO', '024', 'no', 'no', 'no'),
+(6, 'Antigua and Barbuda', 'ATG', 'AG', '028', 'no', 'no', 'no'),
+(7, 'Argentina', 'ARG', 'AR', '032', 'no', 'no', 'no'),
+(8, 'Armenia', 'ARM', 'AM', '051', 'no', 'no', 'no'),
+(9, 'Australia', 'AUS', 'AU', '036', 'no', 'no', 'no'),
+(10, 'Austria', 'AUT', 'AT', '040', 'no', 'no', 'no'),
+(11, 'Azerbaijan', 'AZE', 'AZ', '031', 'no', 'no', 'no'),
+(12, 'Bahamas', 'BHS', 'BS', '044', 'no', 'no', 'no'),
+(13, 'Bahrain', 'BHR', 'BH', '048', 'no', 'no', 'no'),
+(14, 'Bangladesh', 'BGD', 'BD', '050', 'no', 'no', 'no'),
+(15, 'Barbados', 'BRB', 'BB', '052', 'no', 'no', 'no'),
+(16, 'Belarus', 'BLR', 'BY', '112', 'no', 'no', 'no'),
+(17, 'Belgium', 'BEL', 'BE', '056', 'no', 'no', 'no'),
+(18, 'Belize', 'BLZ', 'BZ', '084', 'no', 'no', 'no'),
+(19, 'Benin', 'BEN', 'BJ', '204', 'no', 'no', 'no'),
+(20, 'Bhutan', 'BTN', 'BT', '064', 'no', 'no', 'no'),
+(21, 'Bolivia', 'BOL', 'BO', '068', 'no', 'no', 'no'),
+(22, 'Bosnia and Herzegovina', 'BIH', 'BA', '070', 'no', 'no', 'no'),
+(23, 'Botswana', 'BWA', 'BW', '072', 'no', 'no', 'no'),
+(24, 'Brazil', 'BRA', 'BR', '076', 'no', 'no', 'no'),
+(25, 'Brunei', 'BRN', 'BN', '096', 'no', 'no', 'no'),
+(26, 'Bulgaria', 'BGR', 'BG', '100', 'no', 'no', 'no'),
+(27, 'Burkina Faso', 'BFA', 'BF', '854', 'no', 'no', 'no'),
+(28, 'Burundi', 'BDI', 'BI', '108', 'no', 'no', 'no'),
+(29, 'Cambodia', 'KHM', 'KH', '116', 'no', 'no', 'no'),
+(30, 'Cameroon', 'CMR', 'CM', '120', 'no', 'no', 'no'),
+(31, 'Canada', 'CAN', 'CA', '124', 'no', 'no', 'no'),
+(32, 'Cape Verde', 'CPV', 'CV', '132', 'no', 'no', 'no'),
+(33, 'Central African Republic', 'CAF', 'CF', '140', 'no', 'no', 'no'),
+(34, 'Chad', 'TCD', 'TD', '148', 'no', 'no', 'no'),
+(35, 'Chile', 'CHL', 'CL', '152', 'no', 'no', 'no'),
+(36, 'China', 'CHN', 'CN', '156', 'no', 'no', 'no'),
+(37, 'Colombia', 'COL', 'CO', '170', 'no', 'no', 'no'),
+(38, 'Comoros', 'COM', 'KM', '174', 'no', 'no', 'no'),
+(39, 'Congo', 'COG', 'CG', '178', 'no', 'no', 'no'),
+(41, 'Costa Rica', 'CRI', 'CK', '184', 'no', 'no', 'no'),
+(42, 'Cote d\'Ivoire', 'CIV', 'CR', '188', 'no', 'no', 'no'),
+(43, 'Croatia', 'HRV', 'HR', '191', 'no', 'no', 'no'),
+(44, 'Cuba', 'CUB', 'CU', '192', 'no', 'no', 'no'),
+(45, 'Cyprus', 'CYP', 'CY', '196', 'no', 'no', 'no'),
+(46, 'Czech Republic', 'CZE', 'CZ', '203', 'no', 'no', 'no'),
+(47, 'Denmark', 'DNK', 'DK', '208', 'no', 'no', 'no'),
+(48, 'Djibouti', 'DJI', 'DJ', '262', 'no', 'no', 'no'),
+(49, 'Dominica', 'DMA', 'DM', '212', 'no', 'no', 'no'),
+(50, 'Dominican Republic', 'DOM', 'DO', '214', 'no', 'no', 'no'),
+(51, 'Ecuador', 'ECU', 'EC', '218', 'no', 'no', 'no'),
+(52, 'Egypt', 'EGY', 'EG', '818', 'no', 'no', 'no'),
+(53, 'El Salvador', 'SLV', 'SV', '222', 'no', 'no', 'no'),
+(54, 'Equatorial Guinea', 'GNQ', 'GQ', '226', 'no', 'no', 'no'),
+(55, 'Eritrea', 'ERI', 'ER', '232', 'no', 'no', 'no'),
+(56, 'Estonia', 'EST', 'EE', '233', 'no', 'no', 'no'),
+(57, 'Ethiopia', 'ETH', 'ET', '231', 'no', 'no', 'no'),
+(58, 'Fiji', 'FJI', 'FJ', '242', 'no', 'no', 'no'),
+(59, 'Finland', 'FIN', 'FI', '246', 'no', 'no', 'no'),
+(60, 'France', 'FRA', 'FR', '250', 'no', 'no', 'no'),
+(61, 'Gabon', 'GAB', 'GA', '266', 'no', 'no', 'no'),
+(62, 'Gambia', 'GMB', 'GM', '270', 'no', 'no', 'no'),
+(63, 'Georgia', 'GEO', 'GE', '268', 'no', 'no', 'no'),
+(64, 'Germany', 'DEU', 'DE', '276', 'no', 'no', 'no'),
+(65, 'Ghana', 'GHA', 'GH', '288', 'no', 'no', 'no'),
+(66, 'Greece', 'GRC', 'GR', '300', 'no', 'no', 'no'),
+(67, 'Grenada', 'GRD', 'GD', '308', 'no', 'no', 'no'),
+(68, 'Guatemala', 'GTM', 'GT', '320', 'no', 'no', 'no'),
+(69, 'Guinea', 'GIN', 'GN', '324', 'no', 'no', 'no'),
+(70, 'Guinea-Bissau', 'GNB', 'GW', '624', 'no', 'no', 'no'),
+(71, 'Guyana', 'GUY', 'GY', '328', 'no', 'no', 'no'),
+(72, 'Haiti', 'HTI', 'HT', '332', 'no', 'no', 'no'),
+(73, 'Honduras', 'HND', 'HN', '340', 'no', 'no', 'no'),
+(74, 'Hungary', 'HUN', 'HU', '348', 'no', 'no', 'no'),
+(75, 'Iceland', 'ISL', 'IS', '352', 'no', 'no', 'no'),
+(76, 'India', 'IND', 'IN', '356', 'no', 'no', 'no'),
+(77, 'Indonesia', 'IDN', 'ID', '360', 'no', 'no', 'no'),
+(78, 'Iran', 'IRN', 'IR', '364', 'no', 'no', 'no'),
+(79, 'Iraq', 'IRQ', 'IQ', '368', 'no', 'no', 'no'),
+(80, 'Ireland', 'IRL', 'IE', '372', 'no', 'no', 'no'),
+(81, 'Israel', 'ISR', 'IL', '376', 'no', 'no', 'no'),
+(82, 'Italy', 'ITA', 'IT', '380', 'no', 'no', 'no'),
+(83, 'Jamaica', 'JAM', 'JM', '388', 'no', 'no', 'no'),
+(84, 'Japan', 'JPN', 'JP', '392', 'no', 'no', 'no'),
+(85, 'Jordan', 'JOR', 'JO', '400', 'no', 'no', 'no'),
+(86, 'Kazakhstan', 'KAZ', 'KZ', '398', 'no', 'no', 'no'),
+(87, 'Kenya', 'KEN', 'KE', '404', 'no', 'no', 'no'),
+(88, 'Kiribati', 'KIR', 'KI', '296', 'no', 'no', 'no'),
+(89, 'South Korea', 'KOR', 'KR', '410', 'no', 'no', 'no'),
+(90, 'North Korea', 'PRK', 'KP', '408', 'no', 'no', 'no'),
+(91, 'Kuwait', 'KWT', 'KW', '414', 'no', 'no', 'no'),
+(92, 'Kyrgyzstan', 'KGZ', 'KG', '417', 'no', 'no', 'no'),
+(93, 'Laos', 'LAO', 'LA', '418', 'no', 'no', 'no'),
+(94, 'Latvia', 'LVA', 'LV', '428', 'no', 'no', 'no'),
+(95, 'Lebanon', 'LBN', 'LB', '422', 'no', 'no', 'no'),
+(96, 'Lesotho', 'LSO', 'LS', '426', 'no', 'no', 'no'),
+(97, 'Liberia', 'LBR', 'LR', '430', 'no', 'no', 'no'),
+(98, 'Libya', 'LBY', 'LY', '434', 'no', 'no', 'no'),
+(99, 'Liechtenstein', 'LIE', 'LI', '438', 'no', 'no', 'no'),
+(100, 'Lithuania', 'LTU', 'LT', '440', 'no', 'no', 'no'),
+(101, 'Luxembourg', 'LUX', 'LU', '442', 'no', 'no', 'no'),
+(102, 'Macedonia', 'MKD', 'MK', '807', 'no', 'no', 'no'),
+(103, 'Madagascar', 'MDG', 'MG', '450', 'no', 'no', 'no'),
+(104, 'Malawi', 'MWI', 'MW', '454', 'no', 'no', 'no'),
+(105, 'Malaysia', 'MYS', 'MY', '458', 'no', 'no', 'no'),
+(106, 'Maldives', 'MDV', 'MV', '462', 'no', 'no', 'no'),
+(107, 'Mali', 'MLI', 'ML', '466', 'no', 'no', 'no'),
+(108, 'Malta', 'MLT', 'MT', '470', 'no', 'no', 'no'),
+(109, 'Marshall Islands', 'MHL', 'MH', '584', 'no', 'no', 'no'),
+(110, 'Mauritania', 'MRT', 'MR', '478', 'no', 'no', 'no'),
+(111, 'Mauritius', 'MUS', 'MU', '480', 'no', 'no', 'no'),
+(112, 'Mexico', 'MEX', 'MX', '484', 'no', 'no', 'no'),
+(113, 'Micronesia', 'FSM', 'FM', '583', 'no', 'no', 'no'),
+(114, 'Moldova', 'MDA', 'MD', '498', 'no', 'no', 'no'),
+(115, 'Monaco', 'MCO', 'MC', '492', 'no', 'no', 'no'),
+(116, 'Mongolia', 'MNG', 'MN', '496', 'no', 'no', 'no'),
+(117, 'Montenegro', 'MNE', 'ME', '499', 'no', 'no', 'no'),
+(118, 'Morocco', 'MAR', 'MA', '504', 'no', 'no', 'no'),
+(119, 'Mozambique', 'MOZ', 'MZ', '508', 'no', 'no', 'no'),
+(120, 'Myanmar (Burma)', 'MMR', 'MM', '104', 'no', 'no', 'no'),
+(121, 'Namibia', 'NAM', 'NA', '516', 'no', 'no', 'no'),
+(122, 'Nauru', 'NRU', 'NR', '520', 'no', 'no', 'no'),
+(123, 'Nepal', 'NPL', 'NP', '524', 'no', 'no', 'no'),
+(124, 'Netherlands', 'NLD', 'NL', '528', 'no', 'no', 'no'),
+(125, 'New Zealand', 'NZL', 'NZ', '554', 'no', 'no', 'no'),
+(126, 'Nicaragua', 'NIC', 'NI', '558', 'no', 'no', 'no'),
+(127, 'Niger', 'NER', 'NE', '562', 'no', 'no', 'no'),
+(128, 'Nigeria', 'NGA', 'NG', '566', 'no', 'no', 'no'),
+(129, 'Norway', 'NOR', 'NO', '578', 'no', 'no', 'no'),
+(130, 'Oman', 'OMN', 'OM', '512', 'no', 'no', 'no'),
+(131, 'Pakistan', 'PAK', 'PK', '586', 'no', 'no', 'no'),
+(132, 'Palau', 'PLW', 'PW', '585', 'no', 'no', 'no'),
+(133, 'Panama', 'PAN', 'PA', '591', 'no', 'no', 'no'),
+(134, 'Papua New Guinea', 'PNG', 'PG', '598', 'no', 'no', 'no'),
+(135, 'Paraguay', 'PRY', 'PY', '600', 'no', 'no', 'no'),
+(136, 'Peru', 'PER', 'PE', '604', 'no', 'no', 'no'),
+(137, 'Philippines', 'PHL', 'PH', '608', 'no', 'no', 'no'),
+(138, 'Poland', 'POL', 'PL', '616', 'no', 'no', 'no'),
+(139, 'Portugal', 'PRT', 'PT', '620', 'no', 'no', 'no'),
+(140, 'Qatar', 'QAT', 'QA', '634', 'no', 'no', 'no'),
+(141, 'Romania', 'ROU', 'RO', '642', 'no', 'no', 'no'),
+(142, 'Russian Federation', 'RUS', 'RU', '643', 'no', 'no', 'no'),
+(143, 'Rwanda', 'RWA', 'RW', '646', 'no', 'no', 'no'),
+(144, 'Saint Kitts and Nevis', 'KNA', 'KN', '659', 'no', 'no', 'no'),
+(145, 'Saint Lucia', 'LCA', 'LC', '662', 'no', 'no', 'no'),
+(146, 'Saint Vincent and the Grenadines', 'VCT', 'VC', '670', 'no', 'no', 'no'),
+(147, 'Samoa', 'WSM', 'WS', '882', 'no', 'no', 'no'),
+(148, 'San Marino', 'SMR', 'SM', '674', 'no', 'no', 'no'),
+(149, 'Sao Tome and Principe', 'STP', 'ST', '678', 'no', 'no', 'no'),
+(150, 'Saudi Arabia', 'SAU', 'SA', '682', 'no', 'no', 'no'),
+(151, 'Senegal', 'SEN', 'SN', '686', 'no', 'no', 'no'),
+(152, 'Serbia', 'SRB', 'RS', '688', 'no', 'no', 'no'),
+(153, 'Seychelles', 'SYC', 'SC', '690', 'no', 'no', 'no'),
+(154, 'Sierra Leone', 'SLE', 'SL', '694', 'no', 'no', 'no'),
+(155, 'Singapore', 'SGP', 'SG', '702', 'no', 'no', 'no'),
+(156, 'Slovakia', 'SVK', 'SK', '703', 'no', 'no', 'no'),
+(157, 'Slovenia', 'SVN', 'SI', '705', 'no', 'no', 'no'),
+(159, 'Somalia', 'SOM', 'SO', '706', 'no', 'no', 'no'),
+(160, 'South Africa', '+27', 'ZA', '710', 'no', 'no', 'no'),
+(161, 'Spain', 'ESP', 'ES', '724', 'no', 'no', 'no'),
+(162, 'Sri Lanka', 'LKA', 'LK', '144', 'no', 'no', 'no'),
+(163, 'Sudan', 'SDN', 'SD', '736', 'no', 'no', 'no'),
+(164, 'Suriname', 'SUR', 'SR', '740', 'no', 'no', 'no'),
+(165, 'Swaziland', 'SWZ', 'SZ', '748', 'no', 'no', 'no'),
+(166, 'Sweden', 'SWE', 'SE', '752', 'no', 'no', 'no'),
+(167, 'Switzerland', 'CHE', 'CH', '756', 'no', 'no', 'no'),
+(168, 'Syrian Arab Republic', 'SYR', 'SY', '760', 'no', 'no', 'no'),
+(169, 'Tajikistan', 'TJK', 'TJ', '762', 'no', 'no', 'no'),
+(170, 'Tanzania', 'TZA', 'TZ', '834', 'no', 'no', 'no'),
+(171, 'Thailand', 'THA', 'TH', '764', 'no', 'no', 'no'),
+(172, 'Timor-Leste (East Timor)', 'TLS', 'TL', '626', 'no', 'no', 'no'),
+(173, 'Togo', 'TGO', 'TG', '768', 'no', 'no', 'no'),
+(174, 'Tonga', 'TON', 'TO', '776', 'no', 'no', 'no'),
+(175, 'Trinidad and Tobago', 'TTO', 'TT', '780', 'no', 'no', 'no'),
+(176, 'Tunisia', 'TUN', 'TN', '788', 'no', 'no', 'no'),
+(177, 'Turkey', 'TUR', 'TR', '792', 'no', 'no', 'no'),
+(178, 'Turkmenistan', 'TKM', 'TM', '795', 'no', 'no', 'no'),
+(179, 'Tuvalu', 'TUV', 'TV', '798', 'no', 'no', 'no'),
+(180, 'Uganda', 'UGA', 'UG', '800', 'no', 'no', 'no'),
+(181, 'Ukraine', 'UKR', 'UA', '804', 'no', 'no', 'no'),
+(182, 'United Arab Emirates', 'ARE', 'AE', '784', 'no', 'no', 'no'),
+(183, 'United Kingdom', 'GBR', 'GB', '826', 'yes', 'yes', 'no'),
+(184, 'United States', 'USA', 'US', '840', 'yes', 'yes', 'no'),
+(185, 'Uruguay', 'URY', 'UY', '858', 'no', 'no', 'no'),
+(186, 'Uzbekistan', 'UZB', 'UZ', '860', 'no', 'no', 'no'),
+(187, 'Vanuatu', 'VUT', 'VU', '548', 'no', 'no', 'no'),
+(188, 'Vatican City', 'VAT', 'VA', '336', 'no', 'no', 'no'),
+(189, 'Venezuela', 'VEN', 'VE', '862', 'no', 'no', 'no'),
+(190, 'Vietnam', 'VNM', 'VN', '704', 'no', 'no', 'no'),
+(191, 'Yemen', 'YEM', 'YE', '887', 'no', 'no', 'no'),
+(192, 'Zambia', 'ZMB', 'ZM', '894', 'no', 'no', 'no'),
+(193, 'Zimbabwe', 'ZWE', 'ZW', '716', 'no', 'no', 'no'),
+(202, 'Christmas Island', 'CXR', 'CX', '162', 'no', 'no', 'no'),
+(203, 'Cocos (Keeling) Islands', 'CCK', 'CC', '166', 'no', 'no', 'no'),
+(205, 'Heard Island and McDonald Islands', 'HMD', 'HM', '334', 'no', 'no', 'no'),
+(206, 'Norfolk Island', 'NFK', 'NF', '574', 'no', 'no', 'no'),
+(207, 'New Caledonia', 'NCL', 'NC', '540', 'no', 'no', 'no'),
+(208, 'French Polynesia', 'PYF', 'PF', '258', 'no', 'no', 'no'),
+(209, 'Mayotte', 'MYT', 'YT', '175', 'no', 'no', 'no'),
+(210, 'Saint Barthelemy', 'GLP', 'BL', '652', 'no', 'no', 'no'),
+(211, 'Saint Martin', 'GLP', 'MF', '663', 'no', 'no', 'no'),
+(212, 'Saint Pierre and Miquelon', 'SPM', 'PM', '666', 'no', 'no', 'no'),
+(213, 'Wallis and Futuna', 'WLF', 'WF', '876', 'no', 'no', 'no'),
+(214, 'French Southern and Antarctic Lands', 'ATF', 'TF', '260', 'no', 'no', 'no'),
+(216, 'Bouvet Island', 'BVT', 'BV', '074', 'no', 'no', 'no'),
+(217, 'Cook Islands', 'COK', 'CD', '180', 'no', 'no', 'no'),
+(218, 'Niue', 'NIU', 'NU', '570', 'no', 'no', 'no'),
+(219, 'Tokelau', 'TKL', 'TK', '772', 'no', 'no', 'no'),
+(220, 'Guernsey', 'GGY', 'GG', '831', 'no', 'no', 'no'),
+(221, 'Isle of Man', 'IMN', 'IM', '833', 'no', 'no', 'no'),
+(222, 'Jersey', 'JEY', 'JE', '832', 'no', 'no', 'no'),
+(223, 'Anguilla', 'AIA', 'AI', '660', 'no', 'no', 'no'),
+(224, 'Bermuda', 'BMU', 'BM', '060', 'no', 'no', 'no'),
+(225, 'British Indian Ocean Territory', 'IOT', 'IO', '086', 'no', 'no', 'no'),
+(227, 'British Virgin Islands', 'VGB', 'VG', '092', 'no', 'no', 'no'),
+(228, 'Cayman Islands', 'CYM', 'KY', '136', 'no', 'no', 'no'),
+(229, 'Falkland Islands (Islas Malvinas)', 'FLK', 'FK', '238', 'no', 'no', 'no'),
+(230, 'Gibraltar', 'GIB', 'GI', '292', 'no', 'no', 'no'),
+(231, 'Montserrat', 'MSR', 'MS', '500', 'no', 'no', 'no'),
+(232, 'Pitcairn Islands', 'PCN', 'PN', '612', 'no', 'no', 'no'),
+(233, 'Saint Helena', 'SHN', 'SH', '654', 'no', 'no', 'no'),
+(234, 'South Georgia & South Sandwich Islands', 'SGS', 'GS', '239', 'no', 'no', 'no'),
+(235, 'Turks and Caicos Islands', 'TCA', 'TC', '796', 'no', 'no', 'no'),
+(236, 'Northern Mariana Islands', 'MNP', 'MP', '580', 'no', 'no', 'no'),
+(237, 'Puerto Rico', 'PRI', 'PR', '630', 'no', 'no', 'no'),
+(238, 'American Samoa', 'ASM', 'AS', '016', 'no', 'no', 'no'),
+(240, 'Guam', 'GUM', 'GU', '316', 'no', 'no', 'no'),
+(248, 'US Virgin Islands', 'VIR', 'VI', '850', 'no', 'no', 'no'),
+(250, 'Hong Kong', 'HKG', 'HK', '344', 'no', 'no', 'no'),
+(251, 'Macau', 'MAC', 'MO', '446', 'no', 'no', 'no'),
+(252, 'Faroe Islands', 'FRO', 'FO', '234', 'no', 'no', 'no'),
+(253, 'Greenland', 'GRL', 'GL', '304', 'no', 'no', 'no'),
+(254, 'French Guiana', 'GUF', 'GF', '254', 'no', 'no', 'no'),
+(255, 'Guadeloupe', 'GLP', 'GP', '312', 'no', 'no', 'no'),
+(256, 'Martinique', 'MTQ', 'MQ', '474', 'no', 'no', 'no'),
+(257, 'Reunion', 'REU', 'RE', '638', 'no', 'no', 'no'),
+(259, 'Aruba', 'ABW', 'AW', '533', 'no', 'no', 'no'),
+(260, 'Netherlands Antilles', 'ANT', 'AN', '530', 'no', 'no', 'no'),
+(261, 'Svalbard and Jan Mayen', 'SJM', 'SJ', '744', 'no', 'no', 'no'),
+(264, 'Australian Antarctic Territory', 'ATA', 'AQ', '010', 'no', 'no', 'no');
 
 -- --------------------------------------------------------
 
@@ -539,17 +596,14 @@ INSERT INTO `mc_countries` (`id`, `cName`, `cISO`, `cISO_2`, `iso4217`, `enCount
 -- Структура таблицы `mc_coupons`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_coupons` (
-  `id` mediumint(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_coupons` (
+  `id` mediumint(10) UNSIGNED NOT NULL,
   `cCampaign` int(7) NOT NULL DEFAULT '0',
   `cDiscountCode` varchar(200) NOT NULL DEFAULT '',
   `cUseDate` date NOT NULL DEFAULT '0000-00-00',
   `saleID` mediumint(10) NOT NULL DEFAULT '0',
-  `discountValue` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `code_index` (`cDiscountCode`),
-  KEY `sale_index` (`saleID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `discountValue` varchar(100) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -557,13 +611,12 @@ CREATE TABLE IF NOT EXISTS `mc_coupons` (
 -- Структура таблицы `mc_currencies`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_currencies` (
+CREATE TABLE `mc_currencies` (
   `currency` char(3) NOT NULL DEFAULT '',
-  `rate` varchar(20) NOT NULL DEFAULT '0',
+  `rate` varchar(20) NOT NULL DEFAULT '',
   `enableCur` enum('yes','no') DEFAULT 'no',
   `curname` varchar(30) NOT NULL,
-  `currencyDisplayPref` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`currency`)
+  `currencyDisplayPref` varchar(100) NOT NULL DEFAULT ''
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
@@ -571,39 +624,55 @@ CREATE TABLE IF NOT EXISTS `mc_currencies` (
 --
 
 INSERT INTO `mc_currencies` (`currency`, `rate`, `enableCur`, `curname`, `currencyDisplayPref`) VALUES
-('USD', '1.5293', 'yes', 'US Dollar', 'US&#036;{PRICE}'),
-('JPY', '125.5', 'no', 'Japanese Yen', '{PRICE}&#165;'),
-('CZK', '25.443', 'no', 'Czech Koruny', ''),
-('DKK', '7.4573', 'no', 'Danish Kroner', ''),
-('GBP', '1', 'no', 'British Pound', '&pound;{PRICE}'),
-('HUF', '297.64', 'no', 'Hungarian Forint', ''),
-('LTL', '3.4528', 'no', 'Lithuanian Litai', ''),
-('LVL', '0.701', 'no', 'Latvian Lati', ''),
-('PLN', '4.138', 'no', 'Polish Zlotych', ''),
-('SEK', '8.3239', 'no', 'Swedish Kronor', ''),
-('CHF', '1.2355', 'no', 'Swiss Franc', ''),
-('NOK', '7.4435', 'no', 'Norwegian Krone', ''),
-('HRK', '7.5908', 'no', 'Croatian Kuna', ''),
-('RUB', '40.1213', 'no', 'Russian Rubles', ''),
-('TRY', '2.349', 'no', 'Turkish New Lira', ''),
-('AUD', '1.6667', 'yes', 'Australian Dollar', '&#036;{PRICE}AUD'),
-('BRL', '2.5578', 'no', 'Brazilian Real', ''),
-('CAD', '1.347', 'no', 'Canadian Dollar', 'CA&#036;{PRICE}'),
-('CNY', '8.1413', 'no', 'Chinese Yuan Renminbi', ''),
-('HKD', '10.1525', 'no', 'Hong Kong Dollar', 'HK&#036;'),
-('IDR', '12676.1', 'no', 'Indonesian Rupiah', ''),
-('ILS', '4.8163', 'no', 'Israeli Shekel', ''),
-('INR', '71.177', 'no', 'Indian Rupee', ''),
-('KRW', '1427.23', 'no', 'South Korean Won', ''),
-('MXN', '16.6598', 'no', 'Mexican Peso', ''),
-('MYR', '4.0658', 'no', 'Malaysian Ringgit', ''),
-('NZD', '1.5789', 'no', 'New Zealand Dollar', ''),
-('PHP', '53.221', 'no', 'Philippine Peso', ''),
-('SGD', '1.6317', 'no', 'Singapore Dollar', ''),
-('THB', '38.903', 'no', 'Thai Baht', ''),
-('ZAR', '11.8996', 'no', 'South African Rand', ''),
-('EUR', '1.1577', 'yes', 'Euro', '{PRICE}&euro;'),
+('USD', '0', 'no', 'US Dollar', ''),
+('JPY', '0', 'no', 'Japanese Yen', ''),
+('CZK', '0', 'no', 'Czech Koruny', ''),
+('DKK', '0', 'no', 'Danish Kroner', ''),
+('GBP', '0', 'yes', 'British Pound', '&pound;{PRICE}'),
+('HUF', '0', 'no', 'Hungarian Forint', ''),
+('LTL', '0', 'no', 'Lithuanian Litai', ''),
+('LVL', '0', 'no', 'Latvian Lati', ''),
+('PLN', '0', 'no', 'Polish Zlotych', ''),
+('SEK', '0', 'no', 'Swedish Kronor', ''),
+('CHF', '0', 'no', 'Swiss Franc', ''),
+('NOK', '0', 'no', 'Norwegian Krone', ''),
+('HRK', '0', 'no', 'Croatian Kuna', ''),
+('RUB', '0', 'no', 'Russian Rubles', ''),
+('TRY', '0', 'no', 'Turkish New Lira', ''),
+('AUD', '1.84', 'no', 'Australian Dollar', ''),
+('BRL', '0', 'no', 'Brazilian Real', ''),
+('CAD', '0', 'no', 'Canadian Dollar', ''),
+('CNY', '0', 'no', 'Chinese Yuan Renminbi', ''),
+('HKD', '11.00', 'no', 'Hong Kong Dollar', 'HKD{PRICE}'),
+('IDR', '0', 'no', 'Indonesian Rupiah', ''),
+('ILS', '0', 'no', 'Israeli Shekel', ''),
+('INR', '0', 'no', 'Indian Rupee', ''),
+('KRW', '0', 'no', 'South Korean Won', ''),
+('MXN', '0', 'no', 'Mexican Peso', ''),
+('MYR', '0', 'no', 'Malaysian Ringgit', ''),
+('NZD', '0', 'no', 'New Zealand Dollar', ''),
+('PHP', '0', 'no', 'Philippine Peso', ''),
+('SGD', '0', 'no', 'Singapore Dollar', ''),
+('THB', '0', 'no', 'Thai Baht', ''),
+('ZAR', '0', 'no', 'South African Rand', ''),
+('EUR', '1.26', 'no', 'Euro', '{PRICE}&euro;'),
 ('NGN', '0', 'no', 'Nigerian Naira', '');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_dropshippers`
+--
+
+CREATE TABLE `mc_dropshippers` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `emails` text,
+  `status` text,
+  `method` text,
+  `salestatus` varchar(100) NOT NULL DEFAULT '',
+  `enable` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -611,28 +680,13 @@ INSERT INTO `mc_currencies` (`currency`, `rate`, `enableCur`, `curname`, `curren
 -- Структура таблицы `mc_entry_log`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_entry_log` (
-  `id` int(7) unsigned NOT NULL AUTO_INCREMENT,
-  `userName` varchar(100) NOT NULL DEFAULT '',
-  `loggedDate` date NOT NULL DEFAULT '0000-00-00',
-  `loggedTime` time NOT NULL DEFAULT '00:00:00',
-  PRIMARY KEY (`id`),
-  KEY `user_index` (`userName`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
-
---
--- Дамп данных таблицы `mc_entry_log`
---
-
-INSERT INTO `mc_entry_log` (`id`, `userName`, `loggedDate`, `loggedTime`) VALUES
-(1, 'admin', '2014-08-05', '09:20:59'),
-(2, 'admin', '2014-08-05', '09:22:15'),
-(3, 'admin', '2014-08-05', '14:09:28'),
-(4, 'admin', '2014-08-05', '14:11:30'),
-(5, 'admin', '2014-08-05', '14:13:44'),
-(6, 'admin', '2014-08-05', '14:14:22'),
-(7, 'admin', '2014-08-05', '14:14:55'),
-(8, 'admin', '2014-08-18', '08:20:11');
+CREATE TABLE `mc_entry_log` (
+  `id` int(7) UNSIGNED NOT NULL,
+  `userid` int(8) NOT NULL DEFAULT '0',
+  `logdatetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ip` varchar(250) NOT NULL DEFAULT '',
+  `type` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -640,14 +694,12 @@ INSERT INTO `mc_entry_log` (`id`, `userName`, `loggedDate`, `loggedTime`) VALUES
 -- Структура таблицы `mc_flat`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_flat` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_flat` (
+  `id` int(10) UNSIGNED NOT NULL,
   `inZone` int(8) NOT NULL DEFAULT '0',
   `rate` varchar(30) NOT NULL DEFAULT '',
-  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `zone_index` (`inZone`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -655,24 +707,14 @@ CREATE TABLE IF NOT EXISTS `mc_flat` (
 -- Структура таблицы `mc_giftcerts`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_giftcerts` (
-  `id` mediumint(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_giftcerts` (
+  `id` mediumint(10) UNSIGNED NOT NULL,
   `name` varchar(250) NOT NULL DEFAULT '',
   `value` varchar(10) NOT NULL DEFAULT '',
   `image` varchar(250) NOT NULL DEFAULT '',
   `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `orderBy` int(5) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- Дамп данных таблицы `mc_giftcerts`
---
-
-INSERT INTO `mc_giftcerts` (`id`, `name`, `value`, `image`, `enabled`, `orderBy`) VALUES
-(1, '5 Pound Gift Certificate', '5.00', 'gift-1.gif', 'yes', 1),
-(2, '10 Pound Gift Certificate', '10.00', 'gift-2.gif', 'yes', 2),
-(3, '20 Pound Gift Certificate', '20.00', 'gift-3.gif', 'yes', 3);
+  `orderBy` int(5) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -680,8 +722,8 @@ INSERT INTO `mc_giftcerts` (`id`, `name`, `value`, `image`, `enabled`, `orderBy`
 -- Структура таблицы `mc_giftcodes`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_giftcodes` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_giftcodes` (
+  `id` int(10) UNSIGNED NOT NULL,
   `saleID` int(10) NOT NULL DEFAULT '0',
   `purchaseID` int(11) NOT NULL DEFAULT '0',
   `giftID` int(10) NOT NULL DEFAULT '0',
@@ -696,12 +738,8 @@ CREATE TABLE IF NOT EXISTS `mc_giftcodes` (
   `dateAdded` date NOT NULL DEFAULT '0000-00-00',
   `notes` text,
   `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `active` enum('yes','no') NOT NULL DEFAULT 'no',
-  PRIMARY KEY (`id`),
-  KEY `gift_index` (`giftID`),
-  KEY `sale_index` (`saleID`),
-  KEY `purc_index` (`purchaseID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `active` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -709,12 +747,13 @@ CREATE TABLE IF NOT EXISTS `mc_giftcodes` (
 -- Структура таблицы `mc_methods`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_methods` (
-  `id` int(3) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_methods` (
+  `id` int(3) NOT NULL,
   `orderby` int(3) NOT NULL DEFAULT '0',
   `method` varchar(100) NOT NULL DEFAULT '',
   `display` varchar(100) NOT NULL DEFAULT '',
   `status` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `defmeth` enum('yes','no') NOT NULL DEFAULT 'no',
   `liveserver` varchar(250) NOT NULL DEFAULT '',
   `sandboxserver` varchar(250) NOT NULL DEFAULT '',
   `plaintext` text,
@@ -725,42 +764,40 @@ CREATE TABLE IF NOT EXISTS `mc_methods` (
   `docs` varchar(100) NOT NULL DEFAULT '',
   `webpage` varchar(100) NOT NULL DEFAULT '',
   `statuses` text,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=30 ;
+  `viewtype` varchar(20) NOT NULL DEFAULT 'a'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `mc_methods`
 --
 
-INSERT INTO `mc_methods` (`id`, `orderby`, `method`, `display`, `status`, `liveserver`, `sandboxserver`, `plaintext`, `htmltext`, `info`, `redirect`, `image`, `docs`, `webpage`, `statuses`) VALUES
-(1, 1, 'paypal', 'Paypal IPN', 'yes', 'https://www.paypal.com/cgi-bin/webscr', 'https://www.sandbox.paypal.com/cgi-bin/webscr', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'paypal.png', 'payment-1', 'https://www.paypal.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(2, 2, 'twocheckout', '2Checkout', 'yes', 'https://www.2checkout.com/checkout/purchase', 'https://www.2checkout.com/checkout/purchase', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', '2checkout.png', 'payment-2', 'https://www.2checkout.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(3, 3, 'google', 'Google Checkout', 'no', 'https://checkout.google.com/api/checkout/v2/checkoutForm/Merchant/', 'https://sandbox.google.com/checkout/api/checkout/v2/checkoutForm/Merchant/', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'google.png', 'payment-3', 'https://checkout.google.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(4, 4, 'moneybookers', 'Skrill', 'no', 'https://www.moneybookers.com/app/payment.pl', 'https://www.moneybookers.com/app/payment.pl', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'skrill.png', 'payment-5', 'https://www.moneybookers.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(5, 5, 'payza', 'Payza', 'no', 'https://www.payza.com/PayProcess.aspx', 'https://sandbox.payza.com/sandbox/payprocess.aspx', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'payza.png', 'payment-4', 'https://www.payza.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(6, 6, 'payfast', 'Payfast', 'no', 'https://www.payfast.co.za/eng/process', 'https://sandbox.payfast.co.za/eng/process', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'payfast.png', 'payment-7', 'https://www.payfast.co.za', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(7, 99, 'cod', 'Cash on Delivery', 'yes', '', '', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'cod.png', 'payment-6', '', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(8, 100, 'bank', 'Bank Transfer', 'yes', '', '', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'bank.png', 'payment-6', '', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(9, 101, 'cheque', 'Cheque/Check', 'yes', '', '', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'cheque.png', 'payment-6', '', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(10, 102, 'phone', 'Phone Order', 'yes', '', '', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'phone.png', 'payment-6', '', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(11, 7, 'nochex', 'Nochex APC', 'no', 'https://secure.nochex.com', 'https://secure.nochex.com', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'nochex.png', 'payment-8', 'https://www.nochex.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(12, 8, 'cardsave', 'CardSave', 'no', 'https://mms.cardsaveonlinepayments.com/Pages/PublicPages/PaymentForm.aspx', 'https://mms.cardsaveonlinepayments.com/Pages/PublicPages/PaymentForm.aspx', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'cardsave.png', 'payment-9', 'http://www.cardsave.net', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(13, 9, 'sagepay', 'Sage Pay', 'no', 'https://live.sagepay.com/gateway/service/vspform-register.vsp', 'https://test.sagepay.com/Simulator/VSPFormGateway.asp', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'sagepay.png', 'payment-10', 'http://www.sagepay.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(14, 10, 'eway', 'eWay UK', 'no', 'https://payment.ewaygateway.com/Request/', 'https://payment.ewaygateway.com/Results/', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'eway.png', 'payment-11', 'http://www.eway.co.uk', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(15, 11, 'worldpay', 'WorldPay', 'no', 'https://secure.worldpay.com/wcc/purchase', 'https://secure-test.worldpay.com/wcc/purchase', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'worldpay.png', 'payment-12', 'http://www.worldpay.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(16, 12, 'cardstream', 'Cardstream', 'no', 'https://gateway.cardstream.com/hosted/', 'https://gateway.cardstream.com/hosted/', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'cardstream.png', 'payment-13', 'http://www.cardstream.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(17, 13, 'paypoint', 'Paypoint', 'no', 'https://www.secpay.com/java-bin/ValCard', 'https://www.secpay.com/java-bin/ValCard', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'paypoint.png', 'payment-14', 'http://www.paypoint.net', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(18, 14, 'liqpay', 'Liqpay', 'no', 'https://liqpay.com/?do=clickNbuy', 'https://liqpay.com/?do=clickNbuy', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'liqpay.png', 'payment-15', 'http://www.liqpay.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(19, 15, 'authnet', 'Authorize.net', 'no', 'https://secure.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'authnet.png', 'payment-16', 'http://www.authorize.net', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(20, 16, 'paymate', 'Paymate', 'no', 'https://www.paymate.com/PayMate/ExpressPayment', 'https://www.paymate.com.au/PayMate/TestExpressPayment', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'paymate.png', 'payment-17', 'http://www.paymate.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(21, 17, 'realex', 'Realex Payments', 'no', 'https://epage.payandshop.com/epage.cgi', 'https://epage.payandshop.com/epage.cgi', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'realex.png', 'payment-18', 'http://www.realexpayments.co.uk', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(22, 18, 'beanstream', 'Beanstream', 'no', 'https://www.beanstream.com/scripts/process_transaction.asp', 'https://www.beanstream.com/scripts/process_transaction.asp', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'beanstream.png', 'payment-19', 'https://www.beanstream.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(24, 19, 'charity', 'Charity Clear', 'no', 'https://gateway.charityclear.com/hosted/', 'https://gateway.charityclear.com/hosted/', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'charity.png', 'payment-20', 'http://www.charityclear.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(25, 20, 'icepay', 'IcePay', 'no', 'https://pay.icepay.eu/Checkout.aspx', 'https://pay.icepay.eu/Checkout.aspx', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'icepay.png', 'payment-21', 'http://www.icepay.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(26, 21, 'ccnow', 'CCNow', 'no', 'https://www.ccnow.com/cgi-local/transact.cgi', 'https://www.ccnow.com/cgi-local/transact.cgi', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'ccnow.png', 'payment-22', 'http://www.ccnow.com', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(27, 23, 'suvtoy', 'Suomen Verkkomaksut', 'no', 'https://payment.verkkomaksut.fi', 'https://payment.verkkomaksut.fi', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'suvtoy.png', 'payment-24', 'http://verkkomaksut.fi/en/', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(28, 22, 'iridium', 'Iridium Corporation', 'no', 'https://mms.iridiumcorp.net/Pages/PublicPages/PaymentForm.aspx', 'https://mms.iridiumcorp.net/Pages/PublicPages/PaymentForm.aspx', '', '', 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'iridium.png', 'payment-23', 'http://www.iridiumcorp.co.uk', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}'),
-(29, 24, 'iris', 'Global Iris', 'yes', 'https://redirect.globaliris.com/epage.cgi', 'https://redirect.globaliris.com/epage.cgi', NULL, NULL, 'Lorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.\r\n\r\nLorem ipsum dolor sit amet consectetuer Ut dapibus dui malesuada urna. Adipiscing congue Vestibulum libero ipsum pretium convallis ligula ac Nullam Phasellus. Felis parturient ante In Curabitur eros interdum ut et turpis orci. Et dui magna adipiscing tristique ipsum aliquet adipiscing malesuada Nulla congue. Nec vel condimentum ut Pellentesque platea eleifend massa Sed sed justo. Dui Aliquam tellus sodales massa ipsum metus Vestibulum Maecenas at malesuada. Sit.', '', 'iris.png', 'payment-25', 'http://www.globalpaymentsinc.co.uk/global-iris.html', 'a:5:{s:9:"completed";s:8:"shipping";s:8:"download";s:9:"completed";s:7:"virtual";s:9:"completed";s:7:"pending";s:7:"pending";s:8:"refunded";s:6:"refund";}');
+INSERT INTO `mc_methods` (`id`, `orderby`, `method`, `display`, `status`, `defmeth`, `liveserver`, `sandboxserver`, `plaintext`, `htmltext`, `info`, `redirect`, `image`, `docs`, `webpage`, `statuses`, `viewtype`) VALUES
+(1, 1, 'paypal', 'Paypal', 'no', 'yes', 'https://www.paypal.com/cgi-bin/webscr', 'https://www.sandbox.paypal.com/cgi-bin/webscr', '', '', '', '', 'paypal.png', 'payment-1', 'https://www.paypal.com', 'a:5:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";s:7:\"pending\";s:7:\"pending\";s:8:\"refunded\";s:6:\"refund\";}', 'all'),
+(2, 2, 'twocheckout', '2Checkout', 'no', 'no', 'https://www.2checkout.com/checkout/purchase', 'https://www.2checkout.com/checkout/purchase', '', '', '', '', '2checkout.png', 'payment-2', 'https://www.2checkout.com', 'a:5:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";s:7:\"pending\";s:7:\"pending\";s:8:\"refunded\";s:6:\"refund\";}', 'all'),
+(3, 3, 'skrill', 'Skrill', 'no', 'no', 'https://www.moneybookers.com/app/payment.pl', 'https://www.moneybookers.com/app/payment.pl', '', '', '', '', 'skrill.png', 'payment-5', 'https://www.skrill.com', 'a:5:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";s:7:\"pending\";s:7:\"pending\";s:8:\"refunded\";s:6:\"refund\";}', 'all'),
+(4, 4, 'payza', 'Payza', 'no', 'no', 'https://secure.payza.com/checkout', 'https://sandbox.payza.com/sandbox/payprocess.aspx', '', '', '', '', 'payza.png', 'payment-4', 'https://www.payza.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:4:\"free\";s:9:\"completed\";}', 'all'),
+(5, 5, 'payfast', 'Payfast', 'no', 'no', 'https://www.payfast.co.za/eng/process', 'https://sandbox.payfast.co.za/eng/process', '', '', '', '', 'payfast.png', 'payment-7', 'https://www.payfast.co.za', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(6, 6, 'cardsave', 'CardSave', 'no', 'no', 'https://mms.cardsaveonlinepayments.com/Pages/PublicPages/PaymentForm.aspx', 'https://mms.cardsaveonlinepayments.com/Pages/PublicPages/PaymentForm.aspx', '', '', '', '', 'cardsave.png', 'payment-9', 'http://www.cardsave.net', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(7, 7, 'sagepay', 'Sage Pay', 'no', 'no', 'https://live.sagepay.com/gateway/service/vspform-register.vsp', 'https://test.sagepay.com/Simulator/VSPFormGateway.asp', '', '', '', '', 'sagepay.png', 'payment-10', 'http://www.sagepay.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(8, 8, 'worldpay', 'WorldPay', 'no', 'no', 'https://secure.worldpay.com/wcc/purchase', 'https://secure-test.worldpay.com/wcc/purchase', '', '', '', '', 'worldpay.png', 'payment-12', 'http://www.worldpay.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(9, 9, 'cardstream', 'Cardstream', 'no', 'no', 'https://gateway.cardstream.com/hosted/', 'https://gateway.cardstream.com/hosted/', '', '', '', '', 'cardstream.png', 'payment-13', 'http://www.cardstream.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(10, 10, 'authnet', 'Authorize.net', 'no', 'no', 'https://secure.authorize.net/gateway/transact.dll', 'https://test.authorize.net/gateway/transact.dll', '', '', '', '', 'authnet.png', 'payment-16', 'http://www.authorize.net', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(11, 11, 'paymate', 'Paymate', 'no', 'no', 'https://www.paymate.com/PayMate/ExpressPayment', 'https://www.paymate.com.au/PayMate/TestExpressPayment', '', '', '', '', 'paymate.png', 'payment-17', 'http://www.paymate.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(12, 12, 'realex', 'Realex Payments', 'no', 'no', 'https://hpp.realexpayments.com/pay', 'https://hpp.realexpayments.com/pay', '', '', '', '', 'realex.png', 'payment-18', 'http://www.realexpayments.co.uk', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(13, 13, 'beanstream', 'Beanstream', 'no', 'no', 'https://www.beanstream.com/scripts/payment/payment.asp', 'https://www.beanstream.com/scripts/payment/payment.asp', '', '', '', '', 'beanstream.png', 'payment-19', 'https://www.beanstream.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(14, 14, 'charity', 'Charity Clear', 'no', 'no', 'https://gateway.charityclear.com/hosted/', 'https://gateway.charityclear.com/hosted/', '', '', '', '', 'charity.png', 'payment-20', 'http://www.charityclear.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(15, 15, 'icepay', 'IcePay', 'no', 'no', 'https://pay.icepay.eu/Checkout.aspx', 'https://pay.icepay.eu/Checkout.aspx', '', '', '', '', 'icepay.png', 'payment-21', 'http://www.icepay.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(16, 16, 'ccnow', 'CCNow', 'no', 'no', 'https://www.ccnow.com/cgi-local/transact.cgi', 'https://www.ccnow.com/cgi-local/transact.cgi', '', '', '', '', 'ccnow.png', 'payment-22', 'http://www.ccnow.com', 'a:5:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";s:9:\"cancelled\";s:9:\"completed\";s:8:\"refunded\";s:9:\"completed\";}', 'all'),
+(17, 17, 'paytrail', 'Paytrail', 'no', 'no', 'https://payment.paytrail.com', 'https://payment.paytrail.com', '', '', '', '', 'paytrail.png', 'payment-24', 'http://www.paytrail.com/en/', 'a:5:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";s:9:\"cancelled\";s:9:\"completed\";s:8:\"refunded\";s:9:\"completed\";}', 'all'),
+(18, 18, 'payvector', 'Pay Vector', 'no', 'no', 'https://mms.payvector.net/Pages/PublicPages/PaymentForm.aspx', 'https://mms.payvector.net/Pages/PublicPages/PaymentForm.aspx', '', '', '', '', 'payvector.png', 'payment-23', 'http://www.payvector.co.uk', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(19, 19, 'iris', 'Global Iris', 'no', 'no', 'https://hpp.realexpayments.com/pay', 'https://hpp.realexpayments.com/pay', '', '', '', '', 'iris.png', 'payment-25', 'http://www.globalpaymentsinc.co.uk/global-iris.html', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(20, 20, 'sectrade', 'Secure Trading', 'no', 'no', 'https://payments.securetrading.net/process/payments/details', 'https://payments.securetrading.net/process/payments/details', '', '', '', '', 'sectrade.png', 'payment-26', 'http://www.securetrading.com', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(21, 21, 'paysense', 'PaymentSense', 'no', 'no', 'https://mms.paymentsensegateway.com/Pages/PublicPages/PaymentForm.aspx', 'https://mms.paymentsensegateway.com/Pages/PublicPages/PaymentForm.aspx', '', '', '', '', 'paysense.png', 'payment-31', 'http://www.paymentsense.co.uk/', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(22, 22, 'cod', 'Cash on Delivery', 'yes', 'no', '', '', 'Our drivers name is\r\n\r\nJim Jones', 'Our drivers name is\r\n\r\nJim Jones', '', '', 'cod.png', 'payment-6', '', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(23, 23, 'bank', 'Bank Transfer', 'yes', 'no', '', '', 'Transfer to bank', 'Transfer to bank.\r\n\r\n[em] Emphasised Text [/em]\r\n\r\n[color=#FF0000] Red Text [/color]\r\n\r\n[list]\r\n [*] Bullet List Item 1 [/*]\r\n [*] Bullet List Item 2 [/*]\r\n [*] Bullet List Item 3 [/*]\r\n[/list]\r\n\r\nHi', '', '', 'bank.png', 'payment-6', '', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(24, 24, 'cheque', 'Cheque/Check', 'yes', 'no', '', '', 'Cheques payable to:\r\n\r\nMe', 'Cheques payable to:\r\n\r\nMe', '', '', 'cheque.png', 'payment-6', '', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(25, 25, 'phone', 'Phone Order', 'yes', 'no', '', '', 'Call us on:\r\n\r\n01543 458373 (ext 23)', 'Call us on:\r\n\r\n01543 458373 (ext 23)', '', '', 'phone.png', 'payment-6', '', 'a:3:{s:9:\"completed\";s:8:\"shipping\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'all'),
+(26, 26, 'account', 'On Account', 'yes', 'no', '', '', '', '', '', '', 'account.png', 'payment-6', '', 'a:3:{s:9:\"completed\";s:9:\"completed\";s:8:\"download\";s:9:\"completed\";s:7:\"virtual\";s:9:\"completed\";}', 'trade');
 
 -- --------------------------------------------------------
 
@@ -768,14 +805,12 @@ INSERT INTO `mc_methods` (`id`, `orderby`, `method`, `display`, `status`, `lives
 -- Структура таблицы `mc_methods_params`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_methods_params` (
-  `id` int(3) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_methods_params` (
+  `id` int(3) NOT NULL,
   `method` varchar(200) NOT NULL DEFAULT '',
   `param` varchar(200) NOT NULL DEFAULT '',
-  `value` varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `mthd_index` (`method`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=72 ;
+  `value` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `mc_methods_params`
@@ -787,71 +822,58 @@ INSERT INTO `mc_methods_params` (`id`, `method`, `param`, `value`) VALUES
 (3, 'paypal', 'locale', ''),
 (4, 'twocheckout', 'account', ''),
 (5, 'twocheckout', 'secret', ''),
-(6, 'google', 'merchant', ''),
-(7, 'google', 'key', ''),
-(8, 'payza', 'ipncode', ''),
-(9, 'payza', 'email', ''),
-(10, 'moneybookers', 'email', ''),
-(11, 'moneybookers', 'language', 'EN'),
-(12, 'moneybookers', 'logo', ''),
-(13, 'moneybookers', 'secret', ''),
-(15, 'payfast', 'merchant-id', ''),
-(16, 'payfast', 'merchant-key', ''),
-(17, 'nochex', 'merchant-id', ''),
-(18, 'cardsave', 'pre-share-key', ''),
-(19, 'cardsave', 'merchant-id', ''),
-(20, 'cardsave', 'password', ''),
-(21, 'sagepay', 'vendor', ''),
-(22, 'sagepay', 'encryption', ''),
-(23, 'sagepay', 'xor-password', ''),
-(24, 'eway', 'customer-id', ''),
-(25, 'eway', 'username', ''),
-(26, 'eway', 'language', 'EN'),
-(27, 'eway', 'company-logo', ''),
-(28, 'eway', 'page-banner', ''),
-(29, 'eway', 'page-title', ''),
-(30, 'eway', 'page-footer', ''),
-(31, 'eway', 'page-desc', ''),
-(32, 'worldpay', 'install-id', ''),
-(33, 'worldpay', 'callback-pw', ''),
-(34, 'cardstream', 'merchant-id', ''),
-(35, 'paypoint', 'merchant-id', ''),
-(36, 'paypoint', 'pass-remote', ''),
-(37, 'paypoint', 'logo', ''),
-(38, 'liqpay', 'merchant-id', ''),
-(39, 'liqpay', 'signature', ''),
-(40, 'nochex', 'check-url', 'https://www.nochex.com/nochex.dll/apc/apc'),
-(41, 'payfast', 'validation-url', 'https://www.payfast.co.za/eng/query/validate'),
-(42, 'authnet', 'login-id', ''),
-(43, 'authnet', 'transaction-key', ''),
-(44, 'authnet', 'response-key', ''),
-(45, 'paymate', 'merchant-id', ''),
-(46, 'realex', 'merchant-id', ''),
-(47, 'realex', 'secret-key', ''),
-(48, 'beanstream', 'merchant-id', ''),
-(49, 'naira', 'username', ''),
-(50, 'charity', 'merchant-id', ''),
-(51, 'twocheckout', 'language', 'EN'),
-(52, 'payfast', 'validation-sand-url', 'https://sandbox.payfast.co.za/eng/query/validate'),
-(53, 'icepay', 'merchant-id', ''),
-(54, 'icepay', 'language', 'EN'),
-(55, 'icepay', 'encryption-code', ''),
-(56, 'beanstream', 'language', ''),
-(57, 'beanstream', 'hash-value', ''),
-(58, 'ccnow', 'login-id', ''),
-(59, 'ccnow', 'language', 'en'),
-(60, 'ccnow', 'secret-key', ''),
-(61, 'ccnow', 'activation-key', ''),
-(62, 'suvtoy', 'merchant-id', ''),
-(63, 'suvtoy', 'language', ''),
-(64, 'suvtoy', 'auth-hash', ''),
-(65, 'iridium', 'pre-share-key', ''),
-(66, 'iridium', 'merchant-id', ''),
-(67, 'iridium', 'password', ''),
-(68, 'iris', 'merchant-id', ''),
-(69, 'iris', 'secret-key', ''),
-(70, 'iris', 'sub-account', ''),
-(71, 'realex', 'sub-account', '');
+(6, 'payza', 'ipncode', ''),
+(7, 'payza', 'email', ''),
+(8, 'skrill', 'email', ''),
+(9, 'skrill', 'language', 'EN'),
+(10, 'skrill', 'logo', ''),
+(11, 'skrill', 'secret', ''),
+(12, 'payfast', 'merchant-id', ''),
+(13, 'payfast', 'merchant-key', ''),
+(14, 'cardsave', 'pre-share-key', ''),
+(15, 'cardsave', 'merchant-id', ''),
+(16, 'cardsave', 'password', ''),
+(17, 'sagepay', 'vendor', ''),
+(18, 'sagepay', 'encryption', 'aes'),
+(19, 'sagepay', 'xor-password', ''),
+(20, 'worldpay', 'install-id', ''),
+(21, 'worldpay', 'callback-pw', ''),
+(22, 'cardstream', 'merchant-id', ''),
+(23, 'payfast', 'validation-url', 'https://www.payfast.co.za/eng/query/validate'),
+(24, 'authnet', 'login-id', ''),
+(25, 'authnet', 'transaction-key', ''),
+(26, 'authnet', 'response-key', ''),
+(27, 'paymate', 'merchant-id', ''),
+(28, 'realex', 'merchant-id', ''),
+(29, 'realex', 'secret-key', ''),
+(30, 'beanstream', 'merchant-id', ''),
+(31, 'charity', 'merchant-id', ''),
+(32, 'twocheckout', 'language', 'EN'),
+(33, 'payfast', 'validation-sand-url', 'https://sandbox.payfast.co.za/eng/query/validate'),
+(34, 'icepay', 'merchant-id', ''),
+(35, 'icepay', 'language', 'EN'),
+(36, 'icepay', 'encryption-code', ''),
+(37, 'beanstream', 'language', ''),
+(38, 'beanstream', 'hash-value', ''),
+(39, 'ccnow', 'login-id', ''),
+(40, 'ccnow', 'language', 'en'),
+(41, 'ccnow', 'secret-key', ''),
+(42, 'ccnow', 'activation-key', ''),
+(43, 'paytrail', 'merchant-id', ''),
+(44, 'paytrail', 'language', ''),
+(45, 'paytrail', 'auth-hash', ''),
+(46, 'payvector', 'pre-share-key', ''),
+(47, 'payvector', 'merchant-id', ''),
+(48, 'payvector', 'password', ''),
+(49, 'iris', 'secret-key', ''),
+(50, 'iris', 'merchant-id', ''),
+(51, 'realex', 'sub-account', ''),
+(52, 'sectrade', 'site-reference', ''),
+(53, 'sectrade', 'notify-password', ''),
+(54, 'sectrade', 'merchant-password', ''),
+(55, 'paysense', 'pre-share-key', ''),
+(56, 'paysense', 'merchant-id', ''),
+(57, 'paysense', 'password', '');
 
 -- --------------------------------------------------------
 
@@ -859,16 +881,14 @@ INSERT INTO `mc_methods_params` (`id`, `method`, `param`, `value`) VALUES
 -- Структура таблицы `mc_mp3`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_mp3` (
-  `id` mediumint(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_mp3` (
+  `id` mediumint(10) UNSIGNED NOT NULL,
   `product_id` int(7) NOT NULL DEFAULT '0',
   `filePath` varchar(250) NOT NULL,
   `fileName` varchar(250) NOT NULL DEFAULT '',
   `fileFolder` varchar(250) NOT NULL DEFAULT '',
-  `orderBy` int(5) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `prod_index` (`product_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `orderBy` int(5) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -876,8 +896,8 @@ CREATE TABLE IF NOT EXISTS `mc_mp3` (
 -- Структура таблицы `mc_newpages`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_newpages` (
-  `id` int(7) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_newpages` (
+  `id` int(7) NOT NULL,
   `pageName` varchar(250) NOT NULL DEFAULT '',
   `pageKeys` text,
   `pageDesc` text,
@@ -891,25 +911,25 @@ CREATE TABLE IF NOT EXISTS `mc_newpages` (
   `landingPage` enum('yes','no') NOT NULL DEFAULT 'no',
   `leftColumn` enum('yes','no') NOT NULL DEFAULT 'yes',
   `rwslug` varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+  `trade` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `mc_newpages`
 --
 
-INSERT INTO `mc_newpages` (`id`, `pageName`, `pageKeys`, `pageDesc`, `pageText`, `orderBy`, `enabled`, `linkPos`, `linkExternal`, `customTemplate`, `linkTarget`, `landingPage`, `leftColumn`, `rwslug`) VALUES
-(1, 'Contact Us', 'contact', 'us', 'If you would like to contact us, please use the form below', 2, 'yes', '1,2', 'no', '', 'new', 'no', 'yes', 'contact'),
-(2, 'Terms & Conditions', 'terms..', 'conditions..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 9, 'yes', '1,2', 'no', '', 'new', 'no', 'yes', 'terms'),
-(3, 'About Us', 'about..', 'us..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 1, 'yes', '1,2', 'no', 'example.tpl.php', 'new', 'no', 'yes', 'about'),
-(4, 'Shipping & Returns', 'shipping..', 'returns..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 10, 'yes', '1,2', 'no', '', 'new', 'no', 'yes', 'shipping'),
-(5, 'Payment Information', 'payment info..', 'payment info..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 7, 'yes', '3', 'no', '', 'new', 'no', 'yes', ''),
-(6, 'Corporate Information', 'corporate info..', 'corporate info..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 5, 'yes', '3', 'no', '', 'new', 'no', 'yes', ''),
-(7, 'Privacy & Security', 'privacy..', 'privacy..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 8, 'yes', '3', 'no', '', 'new', 'no', 'yes', 'privacy'),
-(8, 'Careers', 'careers..', 'careers..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 4, 'yes', '3', 'no', '', 'new', 'no', 'yes', ''),
-(9, 'Order Tracking', 'order tracking..', 'order tracking..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 6, 'yes', '3', 'no', '', 'new', 'no', 'yes', ''),
-(10, 'Warranty/Product Care', 'warranty..', 'warranty..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 11, 'yes', '3', 'no', '', 'new', 'no', 'yes', ''),
-(11, 'F.A.Q', 'faq..', 'faq..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 3, 'yes', '2', 'no', '', 'new', 'no', 'yes', 'faq');
+INSERT INTO `mc_newpages` (`id`, `pageName`, `pageKeys`, `pageDesc`, `pageText`, `orderBy`, `enabled`, `linkPos`, `linkExternal`, `customTemplate`, `linkTarget`, `landingPage`, `leftColumn`, `rwslug`, `trade`) VALUES
+(1, 'Contact Us', 'contact', 'us', 'If you would like to contact us, please use the form below', 2, 'yes', '1,2', 'no', '', 'new', 'no', 'yes', 'contact', 'no'),
+(2, 'Refund Policy', 'refund..', 'policy..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 9, 'yes', '1,2', 'no', '', 'new', 'no', 'yes', 'refunds', 'no'),
+(3, 'About Us', 'about..', 'us..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 1, 'yes', '1,2', 'no', 'example.tpl.php', 'new', 'no', 'yes', 'about', 'no'),
+(4, 'Shipping & Returns', 'shipping..', 'returns..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 10, 'yes', '1,2', 'no', '', 'new', 'no', 'yes', 'shipping', 'no'),
+(5, 'Payment Information', 'payment info..', 'payment info..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 7, 'yes', '3', 'no', '', 'new', 'no', 'yes', '', 'no'),
+(6, 'Corporate Information', 'corporate info..', 'corporate info..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 5, 'yes', '3', 'no', '', 'new', 'no', 'yes', '', 'no'),
+(7, 'Privacy & Security', 'privacy..', 'privacy..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 8, 'yes', '3', 'no', '', 'new', 'no', 'yes', 'privacy', 'no'),
+(8, 'Careers', 'careers..', 'careers..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 4, 'yes', '3', 'no', '', 'new', 'no', 'yes', '', 'no'),
+(9, 'Order Tracking', 'order tracking..', 'order tracking..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 6, 'yes', '3', 'no', '', 'new', 'no', 'yes', '', 'no'),
+(10, 'Warranty/Product Care', 'warranty..', 'warranty..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 11, 'yes', '3', 'no', '', 'new', 'no', 'yes', '', 'no'),
+(11, 'F.A.Q', 'faq..', 'faq..', '(This is only an example: To edit go to admin and System > Manage New Pages)\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiulus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.\r\n\r\nLorem ipsum dolor sit amet consectetuer pede et commodo ridiculus tempus. Suscipit tincidunt adipiscing Pellentesque porta enim porta laoreet interdum Morbi lacus. Curabitur at Pellentesque ac et cursus et accumsan ante orci semper. Penatibus egestas sit vitae ut ipsum nibh dolor Nunc Cum quam. Leo tellus vitae in mi sodales Aenean consequat turpis tempus Aenean. Consectetuer natoque pede tristique dis Pellentesque neque lacinia.', 3, 'yes', '2', 'no', '', 'new', 'no', 'yes', 'faq', 'no');
 
 -- --------------------------------------------------------
 
@@ -917,12 +937,10 @@ INSERT INTO `mc_newpages` (`id`, `pageName`, `pageKeys`, `pageDesc`, `pageText`,
 -- Структура таблицы `mc_newsletter`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_newsletter` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `emailAddress` varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `email_index` (`emailAddress`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+CREATE TABLE `mc_newsletter` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `emailAddress` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -930,15 +948,14 @@ CREATE TABLE IF NOT EXISTS `mc_newsletter` (
 -- Структура таблицы `mc_newstemplates`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_newstemplates` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_newstemplates` (
+  `id` int(10) UNSIGNED NOT NULL,
   `name` varchar(250) NOT NULL DEFAULT '',
   `email` varchar(250) NOT NULL DEFAULT '',
   `subject` varchar(250) NOT NULL DEFAULT '',
   `html` text,
-  `plain` text,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `plain` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -946,21 +963,12 @@ CREATE TABLE IF NOT EXISTS `mc_newstemplates` (
 -- Структура таблицы `mc_news_ticker`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_news_ticker` (
-  `id` int(7) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_news_ticker` (
+  `id` int(7) NOT NULL,
   `newsText` text,
   `enabled` enum('yes','no') NOT NULL DEFAULT 'no',
-  `orderBy` int(7) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- Дамп данных таблицы `mc_news_ticker`
---
-
-INSERT INTO `mc_news_ticker` (`id`, `newsText`, `enabled`, `orderBy`) VALUES
-(1, 'Congratulations, you have successfully installed Maian Cart v2.1, I hope you enjoy it..', 'yes', 1),
-(2, 'Please refer to the documentation (docs) on how to get started. Any problems, please post on the support forums, thank you.', 'yes', 2);
+  `orderBy` int(7) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -968,14 +976,34 @@ INSERT INTO `mc_news_ticker` (`id`, `newsText`, `enabled`, `orderBy`) VALUES
 -- Структура таблицы `mc_paystatuses`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_paystatuses` (
-  `id` int(3) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_paystatuses` (
+  `id` int(3) NOT NULL,
   `statname` varchar(200) NOT NULL DEFAULT '',
   `pMethod` varchar(15) NOT NULL DEFAULT 'all',
-  `homepage` enum('yes','no') NOT NULL DEFAULT 'no',
-  PRIMARY KEY (`id`),
-  KEY `mthd_index` (`pMethod`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `homepage` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_pdf`
+--
+
+CREATE TABLE `mc_pdf` (
+  `id` tinyint(1) NOT NULL,
+  `company` text,
+  `address` varchar(250) NOT NULL DEFAULT '',
+  `font` varchar(50) NOT NULL DEFAULT 'helvetica',
+  `dir` enum('ltr','rtl') NOT NULL DEFAULT 'ltr',
+  `meta` varchar(20) NOT NULL DEFAULT 'utf-8'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `mc_pdf`
+--
+
+INSERT INTO `mc_pdf` (`id`, `company`, `address`, `font`, `dir`, `meta`) VALUES
+(1, '', '', 'helvetica', 'ltr', 'utf-8');
 
 -- --------------------------------------------------------
 
@@ -983,15 +1011,13 @@ CREATE TABLE IF NOT EXISTS `mc_paystatuses` (
 -- Структура таблицы `mc_per`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_per` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_per` (
+  `id` int(10) UNSIGNED NOT NULL,
   `inZone` int(8) NOT NULL DEFAULT '0',
   `rate` varchar(30) NOT NULL DEFAULT '',
   `item` varchar(30) NOT NULL DEFAULT '',
-  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `zone_index` (`inZone`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -999,19 +1025,14 @@ CREATE TABLE IF NOT EXISTS `mc_per` (
 -- Структура таблицы `mc_percent`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_percent` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_percent` (
+  `id` int(10) UNSIGNED NOT NULL,
   `inZone` int(8) NOT NULL DEFAULT '0',
   `priceFrom` varchar(30) NOT NULL DEFAULT '',
   `priceTo` varchar(30) NOT NULL DEFAULT '',
   `percentage` varchar(30) NOT NULL DEFAULT '',
-  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `zone_index` (`inZone`),
-  KEY `from_index` (`priceFrom`),
-  KEY `to_index` (`priceTo`),
-  KEY `en_index` (`enabled`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1019,8 +1040,8 @@ CREATE TABLE IF NOT EXISTS `mc_percent` (
 -- Структура таблицы `mc_personalisation`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_personalisation` (
-  `id` int(7) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_personalisation` (
+  `id` int(7) NOT NULL,
   `productID` int(10) NOT NULL DEFAULT '0',
   `persInstructions` text,
   `persOptions` text,
@@ -1029,10 +1050,8 @@ CREATE TABLE IF NOT EXISTS `mc_personalisation` (
   `enabled` enum('yes','no') NOT NULL DEFAULT 'no',
   `boxType` enum('input','textarea') NOT NULL DEFAULT 'input',
   `reqField` enum('yes','no') NOT NULL DEFAULT 'no',
-  `orderBy` int(7) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `product_index` (`productID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `orderBy` int(7) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1040,8 +1059,8 @@ CREATE TABLE IF NOT EXISTS `mc_personalisation` (
 -- Структура таблицы `mc_pictures`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_pictures` (
-  `id` mediumint(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_pictures` (
+  `id` mediumint(10) UNSIGNED NOT NULL,
   `product_id` int(7) NOT NULL DEFAULT '0',
   `picture_path` varchar(250) NOT NULL DEFAULT '',
   `thumb_path` varchar(250) NOT NULL DEFAULT '',
@@ -1051,26 +1070,9 @@ CREATE TABLE IF NOT EXISTS `mc_pictures` (
   `remoteServer` enum('yes','no') NOT NULL DEFAULT 'no',
   `remoteImg` text,
   `remoteThumb` text,
-  PRIMARY KEY (`id`),
-  KEY `product_index` (`product_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
-
---
--- Дамп данных таблицы `mc_pictures`
---
-
-INSERT INTO `mc_pictures` (`id`, `product_id`, `picture_path`, `thumb_path`, `folder`, `dimensions`, `displayImg`, `remoteServer`, `remoteImg`, `remoteThumb`) VALUES
-(1, 2, 'democart-2-1.jpg', 'democartthumb-2-1.jpg', '', '614,530', 'yes', 'no', NULL, NULL),
-(2, 1, 'democart-1-1.jpg', 'democartthumb-1-1.jpg', '', '509,489', 'yes', 'no', NULL, NULL),
-(3, 4, 'democart-4-1.jpg', 'democartthumb-4-1.jpg', '', '480,479', 'yes', 'no', NULL, NULL),
-(4, 4, 'democart-4-2.jpg', 'democartthumb-4-2.jpg', '', '480,479', 'no', 'no', NULL, NULL),
-(5, 4, 'democart-4-3.jpg', 'democartthumb-4-3.jpg', '', '480,479', 'no', 'no', NULL, NULL),
-(6, 3, 'democart-3-1.jpg', 'democartthumb-3-1.jpg', '', '479,480', 'yes', 'no', NULL, NULL),
-(7, 3, 'democart-3-2.jpg', 'democartthumb-3-2.jpg', '', '479,480', 'no', 'no', NULL, NULL),
-(8, 3, 'democart-3-3.jpg', 'democartthumb-3-3.jpg', '', '479,480', 'no', 'no', NULL, NULL),
-(9, 5, 'democart-5-1.jpg', 'democartthumb-5-1.jpg', '', '640,480', 'no', 'no', NULL, NULL),
-(10, 6, 'democart-6-1.jpg', 'democartthumb-6-1.jpg', '', '300,300', 'yes', 'no', NULL, NULL),
-(11, 6, 'democart-6-2.jpg', 'democartthumb-6-2.jpg', '', '300,300', 'no', 'no', NULL, NULL);
+  `pictitle` text,
+  `picalt` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1078,25 +1080,13 @@ INSERT INTO `mc_pictures` (`id`, `product_id`, `picture_path`, `thumb_path`, `fo
 -- Структура таблицы `mc_price_points`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_price_points` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_price_points` (
+  `id` int(10) UNSIGNED NOT NULL,
   `priceFrom` varchar(30) NOT NULL DEFAULT '',
   `priceTo` varchar(30) NOT NULL DEFAULT '',
   `priceText` varchar(200) NOT NULL DEFAULT '',
-  `orderBy` int(5) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `from_index` (`priceFrom`),
-  KEY `to_index` (`priceTo`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
-
---
--- Дамп данных таблицы `mc_price_points`
---
-
-INSERT INTO `mc_price_points` (`id`, `priceFrom`, `priceTo`, `priceText`, `orderBy`) VALUES
-(1, '0.00', '20.00', '', 1),
-(2, '20.00', '50.00', '', 2),
-(3, '55.00', '500.00', '', 3);
+  `orderBy` int(5) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1104,11 +1094,10 @@ INSERT INTO `mc_price_points` (`id`, `priceFrom`, `priceTo`, `priceText`, `order
 -- Структура таблицы `mc_products`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_products` (
-  `id` mediumint(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_products` (
+  `id` mediumint(10) UNSIGNED NOT NULL,
   `pName` varchar(250) NOT NULL DEFAULT '',
   `pTitle` varchar(250) NOT NULL DEFAULT '',
-  `pBrands` varchar(250) NOT NULL DEFAULT '',
   `pMetaKeys` text,
   `pMetaDesc` text,
   `pTags` text,
@@ -1122,10 +1111,13 @@ CREATE TABLE IF NOT EXISTS `mc_products` (
   `pStock` int(7) NOT NULL DEFAULT '0',
   `pEnable` enum('yes','no') NOT NULL DEFAULT 'yes',
   `pDateAdded` date NOT NULL DEFAULT '0000-00-00',
-  `pVisits` int(10) unsigned NOT NULL DEFAULT '0',
+  `pVisits` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `pVideo` varchar(250) NOT NULL DEFAULT '',
+  `pVideo2` varchar(250) NOT NULL DEFAULT '',
+  `pVideo3` varchar(250) NOT NULL DEFAULT '',
   `pWeight` varchar(50) NOT NULL DEFAULT '',
   `pPrice` varchar(20) NOT NULL DEFAULT '',
+  `pPurPrice` varchar(20) NOT NULL DEFAULT '0.00',
   `pInsurance` varchar(10) NOT NULL DEFAULT '0.00',
   `pOfferExpiry` date NOT NULL DEFAULT '0000-00-00',
   `pOffer` varchar(20) NOT NULL DEFAULT '',
@@ -1142,27 +1134,26 @@ CREATE TABLE IF NOT EXISTS `mc_products` (
   `rwslug` varchar(250) NOT NULL DEFAULT '',
   `pAvailableText` varchar(250) NOT NULL DEFAULT '',
   `pCube` int(10) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `pDownload` (`pDownload`),
-  KEY `code_index` (`pCode`),
-  KEY `name_index` (`pName`),
-  KEY `stock_index` (`pStock`),
-  KEY `en_index` (`pEnable`),
-  KEY `wght_index` (`pWeight`),
-  KEY `brand_index` (`pBrands`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+  `pGuardian` int(10) NOT NULL DEFAULT '0',
+  `dropshipping` int(8) NOT NULL DEFAULT '0',
+  `expiry` date NOT NULL DEFAULT '0000-00-00',
+  `exp_price` varchar(10) NOT NULL DEFAULT '',
+  `exp_special` enum('yes','no') NOT NULL DEFAULT 'no',
+  `exp_send` enum('yes','no') NOT NULL DEFAULT 'no',
+  `exp_text` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
 
 --
--- Дамп данных таблицы `mc_products`
+-- Структура таблицы `mc_prod_brand`
 --
 
-INSERT INTO `mc_products` (`id`, `pName`, `pTitle`, `pBrands`, `pMetaKeys`, `pMetaDesc`, `pTags`, `pDescription`, `pShortDescription`, `pDownload`, `pDownloadPath`, `pDownloadLimit`, `pCode`, `pStockNotify`, `pStock`, `pEnable`, `pDateAdded`, `pVisits`, `pVideo`, `pWeight`, `pPrice`, `pInsurance`, `pOfferExpiry`, `pOffer`, `pMultiBuy`, `rssBuildDate`, `enDisqus`, `freeShipping`, `pPurchase`, `minPurchaseQty`, `maxPurchaseQty`, `countryRestrictions`, `checkoutTextDisplay`, `pNotes`, `rwslug`, `pAvailableText`, `pCube`) VALUES
-(1, 'Ayumi Hamasaki - Rock''n''Roll Circus', '', '0', 'meta..', 'meta..', 'ayumi,hamasaki,next level,jpop diva', 'Ayumi Hamasaki is dropping both her ARENA TOUR 2009 A - NEXT LEVEL -  concert DVD and her brand-new album Rock''n''Roll Circus on the same day! Continuing the diva''s trademark rock pop sounds, Rock''n''Roll Circus includes her hit double A-sides from last year, Sunrise / Sunset ~LOVE is ALL~ and You were... / BALLAD, and ten new songs for a total of 14 tracks. Ayumi''s recent CM songs for Panasonic and Honda, Don''t look back and Microphone, are among the album''s new songs.', 'Ayumi Hamasaki is dropping both her ARENA TOUR 2009 A - NEXT LEVEL -  concert DVD and her brand-new album Rock''n''Roll Circus on the same day! Continuing the diva''s trademark rock pop sounds, Rock''n''Roll Circus includes her hit double A-sides from last year, Sunrise / Sunset ~LOVE is ALL~ and You were... / BALLAD, and ten new songs for a total of 14 tracks.', 'no', '', 0, 'AH-RARC-12', 2, 10, 'yes', '2014-08-05', 683, '', '300', '14.43', '0.00', '0000-00-00', '', 0, 'Tue, 5 Aug 2014 09:17:50 UTC', 'no', 'no', 'yes', 0, 0, NULL, '', NULL, '', '', 0),
-(2, 'Namie Amuro - Past < Future', '', '0', 'meta..', 'meta..', 'namie,amuro,best fiction,jpop diva', 'On the strength of her best-selling Greatest Hits album BEST FICTION  which has sold more than 1.7 million copies, Namie Amuro is releasing her highly anticipated new original album! About two and a half years after her last album PLAY, the J-pop diva plans to start anew with her latest album Past < Future, packing it with 12 ballads and dance numbers, including lead single FAST CAR, the ballad The Meaning Of Us, and the latest Vidal Sassoon CM songs MY LOVE and COPY THAT!.', 'On the strength of her best-selling Greatest Hits album BEST FICTION  which has sold more than 1.7 million copies, Namie Amuro is releasing her highly anticipated new original album! About two and a half years after her last album PLAY, the J-pop diva plans to start anew with her latest album Past < Future.', 'no', '', 0, 'NA-PF-123', 2, 10, 'yes', '2014-08-05', 592, 'file.flv', '300', '12.39', '0.00', '0000-00-00', '10.99', 0, 'Tue, 5 Aug 2014 09:17:50 UTC', 'no', 'no', 'yes', 0, 0, NULL, '', NULL, '', '', 0),
-(3, 'HTC Desire SIM-Free Android Smartphone', '', '2', 'meta..', 'meta..', 'desire,android,snapdragon', 'HTC Desire delivers intense brilliance, sharp contrast, and true colors on the expansive 3.7-inch SuperTFT display. The 1 GHz Qualcomm Snapdragon processor makes the phone incredibly responsive as you multitask from app to app without skipping a beat, while the instinctive HTC Sense experience lets you wield the power of the HTC Desire with the greatest of ease.', 'HTC Desire delivers intense brilliance, sharp contrast, and true colors on the expansive 3.7-inch SuperTFT display. The 1 GHz Qualcomm Snapdragon processor makes the phone incredibly responsive as you multitask from app to app without skipping a beat', 'no', '', 0, 'HTC-123', 2, 10, 'yes', '2014-08-05', 11, '', '1000', '379.81', '0.00', '0000-00-00', '', 0, 'Tue, 5 Aug 2014 09:17:50 UTC', 'no', 'no', 'yes', 0, 0, NULL, '', NULL, '', '', 0),
-(4, 'Acer Aspire 5741, 15.6 LED LCD Notebook', '', '1', '', '', 'aspire,wireless,processor', 'Aspire 5741 - everyday home computing with Core i3 power\r\n\r\nProviding the perfect balance of performance, size and boundary-free wireless capability, the modish yet practical Aspire 5741--powered by the latest Intel Core i3 processor--is the right tool for efficient multitasking, smooth communication, and great entertainment at home or away.\r\nSleek Sophisticated Design\r\n\r\nWith a striking mesh cover design, the Aspire 5741 oozes style. Finished off with classy silver frame traces, it has a distinct power key and intricate matte speaker grills finished off with a glossy bevel giving it the perfect finish.', 'Aspire 5741 - everyday home computing with Core i3 power\r\n\r\nProviding the perfect balance of performance, size and boundary-free wireless capability, the modish yet practical Aspire 5741--powered by the latest Intel Core i3 processor--is the right tool for efficient multitasking', 'no', '', 1, 'AC-123', 0, 10, 'yes', '2014-08-05', 22, '0', '2000', '426.93', '0.00', '0000-00-00', '', 0, 'Tue, 5 Aug 2014 09:17:50 UTC', 'no', 'no', 'yes', 0, 0, NULL, '', NULL, '', '', 0),
-(5, 'Hong Kong Pictures', '', '0', '', '', 'hong,kong,pictures,beach', 'This is a test downloadable product with a couple of pictures from Hong Kong in a zip file.', 'This is a test downloadable product with a couple of pictures from Hong Kong. This is added in the demo store so you can see an example of how the download manager works.', 'yes', 'hongkong/pics1.zip', 1, 'HK-123', 0, 1000, 'yes', '2014-08-05', 22, '0', '0', '4.99', '0.00', '0000-00-00', '', 0, 'Tue, 5 Aug 2014 09:17:50 UTC', 'no', 'no', 'yes', 0, 0, NULL, '', NULL, '', '', 0),
-(6, 'Berghaus Womens Short Sleeve Tech T', '', '4', '', '', 'berghaus,sleeve,tech,activity', 'Lightweight multi-activity base layer that is fast wicking, quick drying and has permanent odour protection meaning you can wear it more and wash it less!\r\nMulti-activity short sleeve base layer using Berghaus own lightweight, fast wicking and quick drying fabric featuring silver ion technology that has permanent odour protection. Wear under a Gore-Tex shell for the best performance.', 'Lightweight multi-activity base layer that is fast wicking, quick drying and has permanent odour protection meaning you can wear it more and wash it less!\r\nMulti-activity short sleeve base layer using Berghaus own lightweight, fast wicking and quick drying fabric featuring silver ion technology th', 'no', '', 1, 'BH-123', 0, 10, 'yes', '2014-08-05', 22, '0', '500', '16.99', '0.00', '0000-00-00', '', 0, 'Tue, 5 Aug 2014 09:17:50 UTC', 'no', 'no', 'yes', 0, 0, NULL, '', NULL, '', '', 0);
+CREATE TABLE `mc_prod_brand` (
+  `id` int(4) UNSIGNED NOT NULL,
+  `product` int(8) NOT NULL DEFAULT '0',
+  `brand` int(8) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1170,26 +1161,11 @@ INSERT INTO `mc_products` (`id`, `pName`, `pTitle`, `pBrands`, `pMetaKeys`, `pMe
 -- Структура таблицы `mc_prod_category`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_prod_category` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_prod_category` (
+  `id` int(4) UNSIGNED NOT NULL,
   `product` int(8) NOT NULL DEFAULT '0',
-  `category` int(8) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `prod_index` (`product`),
-  KEY `cat_index` (`category`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
-
---
--- Дамп данных таблицы `mc_prod_category`
---
-
-INSERT INTO `mc_prod_category` (`id`, `product`, `category`) VALUES
-(1, 1, 2),
-(2, 2, 2),
-(3, 3, 1),
-(4, 4, 1),
-(5, 5, 4),
-(6, 6, 3);
+  `category` int(8) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1197,22 +1173,11 @@ INSERT INTO `mc_prod_category` (`id`, `product`, `category`) VALUES
 -- Структура таблицы `mc_prod_relation`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_prod_relation` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_prod_relation` (
+  `id` int(4) UNSIGNED NOT NULL,
   `product` int(8) NOT NULL DEFAULT '0',
-  `related` int(8) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `prod_index` (`product`),
-  KEY `rel_index` (`related`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
-
---
--- Дамп данных таблицы `mc_prod_relation`
---
-
-INSERT INTO `mc_prod_relation` (`id`, `product`, `related`) VALUES
-(1, 1, 2),
-(2, 2, 1);
+  `related` int(8) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1220,8 +1185,8 @@ INSERT INTO `mc_prod_relation` (`id`, `product`, `related`) VALUES
 -- Структура таблицы `mc_purchases`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_purchases` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_purchases` (
+  `id` int(10) UNSIGNED NOT NULL,
   `purchaseDate` date NOT NULL DEFAULT '0000-00-00',
   `purchaseTime` time NOT NULL DEFAULT '00:00:00',
   `saleID` int(11) NOT NULL DEFAULT '0',
@@ -1244,14 +1209,9 @@ CREATE TABLE IF NOT EXISTS `mc_purchases` (
   `saleConfirmation` enum('yes','no') NOT NULL DEFAULT 'no',
   `deletedProductName` varchar(250) NOT NULL DEFAULT '',
   `freeShipping` enum('yes','no') NOT NULL DEFAULT 'no',
-  PRIMARY KEY (`id`),
-  KEY `saleid_index` (`saleID`),
-  KEY `product_index` (`productID`),
-  KEY `cat_index` (`categoryID`),
-  KEY `conf_index` (`saleConfirmation`),
-  KEY `dcode_index` (`downloadCode`),
-  KEY `ld_index` (`liveDownload`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `wishpur` int(6) NOT NULL DEFAULT '0',
+  `platform` varchar(30) NOT NULL DEFAULT 'desktop'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1259,21 +1219,16 @@ CREATE TABLE IF NOT EXISTS `mc_purchases` (
 -- Структура таблицы `mc_purch_atts`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_purch_atts` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_purch_atts` (
+  `id` int(10) UNSIGNED NOT NULL,
   `saleID` int(11) NOT NULL DEFAULT '0',
   `productID` int(11) NOT NULL DEFAULT '0',
   `purchaseID` int(11) NOT NULL DEFAULT '0',
   `attributeID` int(7) NOT NULL DEFAULT '0',
   `addCost` varchar(20) NOT NULL DEFAULT '',
   `attrName` varchar(100) NOT NULL DEFAULT '',
-  `attrWeight` varchar(50) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `saleid_index` (`saleID`),
-  KEY `prodid_index` (`productID`),
-  KEY `purid_index` (`purchaseID`),
-  KEY `attid_index` (`attributeID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `attrWeight` varchar(50) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1281,20 +1236,30 @@ CREATE TABLE IF NOT EXISTS `mc_purch_atts` (
 -- Структура таблицы `mc_purch_pers`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_purch_pers` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_purch_pers` (
+  `id` int(10) UNSIGNED NOT NULL,
   `saleID` int(11) NOT NULL DEFAULT '0',
   `productID` int(11) NOT NULL DEFAULT '0',
   `purchaseID` int(11) NOT NULL DEFAULT '0',
   `personalisationID` int(7) NOT NULL DEFAULT '0',
   `visitorData` text,
-  `addCost` varchar(20) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `saleid_index` (`saleID`),
-  KEY `prod_index` (`productID`),
-  KEY `purc_index` (`purchaseID`),
-  KEY `pers_index` (`personalisationID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addCost` varchar(20) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_qtyrates`
+--
+
+CREATE TABLE `mc_qtyrates` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `inZone` int(8) NOT NULL DEFAULT '0',
+  `qtyFrom` int(6) NOT NULL DEFAULT '0',
+  `qtyTo` int(6) NOT NULL DEFAULT '0',
+  `rate` varchar(30) NOT NULL DEFAULT '',
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1302,27 +1267,13 @@ CREATE TABLE IF NOT EXISTS `mc_purch_pers` (
 -- Структура таблицы `mc_rates`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_rates` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_rates` (
+  `id` int(4) UNSIGNED NOT NULL,
   `rWeightFrom` varchar(50) NOT NULL DEFAULT '0',
   `rWeightTo` varchar(50) NOT NULL DEFAULT '0',
   `rCost` varchar(20) NOT NULL DEFAULT '',
-  `rService` int(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `from_index` (`rWeightFrom`),
-  KEY `to_index` (`rWeightTo`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
-
---
--- Дамп данных таблицы `mc_rates`
---
-
-INSERT INTO `mc_rates` (`id`, `rWeightFrom`, `rWeightTo`, `rCost`, `rService`) VALUES
-(1, '0', '9999999999999', '1.99', 1),
-(2, '0', '9999999999999', '10.99', 2),
-(3, '0', '9999999999999', '15.99', 3),
-(4, '0', '9999999999999', '20.99', 4),
-(5, '0', '9999999999999', '12.99', 5);
+  `rService` int(6) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1330,9 +1281,10 @@ INSERT INTO `mc_rates` (`id`, `rWeightFrom`, `rWeightTo`, `rCost`, `rService`) V
 -- Структура таблицы `mc_sales`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_sales` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_sales` (
+  `id` int(10) UNSIGNED NOT NULL,
   `invoiceNo` varchar(100) NOT NULL DEFAULT '',
+  `account` int(8) NOT NULL DEFAULT '0',
   `saleNotes` text,
   `bill_1` varchar(250) NOT NULL DEFAULT '',
   `bill_2` varchar(250) NOT NULL DEFAULT '',
@@ -1364,6 +1316,7 @@ CREATE TABLE IF NOT EXISTS `mc_sales` (
   `shipTotal` varchar(20) NOT NULL DEFAULT '',
   `globalTotal` varchar(20) NOT NULL DEFAULT '0',
   `insuranceTotal` varchar(10) NOT NULL DEFAULT '0.00',
+  `chargeTotal` varchar(20) NOT NULL DEFAULT '0.00',
   `globalDiscount` int(5) NOT NULL DEFAULT '0',
   `manualDiscount` varchar(20) NOT NULL DEFAULT '',
   `isPickup` enum('yes','no') NOT NULL DEFAULT 'no',
@@ -1386,10 +1339,11 @@ CREATE TABLE IF NOT EXISTS `mc_sales` (
   `optInNewsletter` enum('yes','no') NOT NULL DEFAULT 'yes',
   `paypalErrorTrigger` tinyint(1) NOT NULL DEFAULT '0',
   `gateparams` text,
-  PRIMARY KEY (`id`),
-  KEY `code_index` (`buyCode`),
-  KEY `conf_index` (`saleConfirmation`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `trackcode` varchar(100) NOT NULL DEFAULT '',
+  `type` enum('personal','trade') NOT NULL DEFAULT 'personal',
+  `wishlist` int(8) NOT NULL DEFAULT '0',
+  `platform` varchar(30) NOT NULL DEFAULT 'desktop'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1397,15 +1351,13 @@ CREATE TABLE IF NOT EXISTS `mc_sales` (
 -- Структура таблицы `mc_search_index`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_search_index` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_search_index` (
+  `id` int(11) UNSIGNED NOT NULL,
   `searchCode` varchar(50) NOT NULL DEFAULT '',
   `results` text,
   `searchDate` date NOT NULL DEFAULT '0000-00-00',
-  `filters` text,
-  PRIMARY KEY (`id`),
-  KEY `code_index` (`searchCode`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `filters` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1413,13 +1365,13 @@ CREATE TABLE IF NOT EXISTS `mc_search_index` (
 -- Структура таблицы `mc_search_log`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_search_log` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_search_log` (
+  `id` int(11) UNSIGNED NOT NULL,
   `keyword` text,
   `results` int(7) NOT NULL DEFAULT '0',
   `searchDate` date NOT NULL DEFAULT '0000-00-00',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `ip` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1427,27 +1379,14 @@ CREATE TABLE IF NOT EXISTS `mc_search_log` (
 -- Структура таблицы `mc_services`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_services` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_services` (
+  `id` int(4) UNSIGNED NOT NULL,
   `sName` varchar(250) NOT NULL DEFAULT '0',
   `sEstimation` varchar(250) NOT NULL DEFAULT '0',
   `sSignature` enum('yes','no') NOT NULL DEFAULT 'yes',
   `inZone` int(6) NOT NULL DEFAULT '0',
-  `enableCOD` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `zone_index` (`inZone`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
-
---
--- Дамп данных таблицы `mc_services`
---
-
-INSERT INTO `mc_services` (`id`, `sName`, `sEstimation`, `sSignature`, `inZone`, `enableCOD`) VALUES
-(1, 'Flat Rate', '5/7 Workings Days', 'no', 1, 'yes'),
-(2, 'Flat Rate', '14/21 Workings Days', 'no', 2, 'yes'),
-(3, 'Flat Rate', '7/9 Workings Days', 'yes', 3, 'yes'),
-(4, 'Flat Rate', '5/7 Workings Days', 'no', 4, 'yes'),
-(5, 'Flat Rate', '7/14 Workings Days', 'yes', 5, 'yes');
+  `enableCOD` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1455,16 +1394,17 @@ INSERT INTO `mc_services` (`id`, `sName`, `sEstimation`, `sSignature`, `inZone`,
 -- Структура таблицы `mc_settings`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_settings` (
-  `id` tinyint(1) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_settings` (
+  `id` tinyint(1) NOT NULL,
   `website` varchar(250) NOT NULL DEFAULT '',
   `theme` varchar(100) NOT NULL DEFAULT '_theme_default',
+  `theme2` varchar(100) NOT NULL DEFAULT '_theme_default',
+  `tradetheme` varchar(100) NOT NULL DEFAULT '',
   `email` varchar(250) NOT NULL DEFAULT '',
   `addEmails` text,
   `serverPath` varchar(250) NOT NULL DEFAULT '',
   `languagePref` varchar(40) NOT NULL DEFAULT 'english.php',
   `logoName` varchar(50) NOT NULL DEFAULT '',
-  `addThisModule` text,
   `baseCurrency` char(3) NOT NULL DEFAULT 'GBP',
   `currencyDisplayPref` varchar(100) NOT NULL DEFAULT '',
   `logErrors` enum('yes','no') NOT NULL DEFAULT 'no',
@@ -1485,7 +1425,6 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `rssScrollerUrl` varchar(250) NOT NULL DEFAULT '',
   `rssScrollerLimit` int(3) NOT NULL DEFAULT '10',
   `en_modr` enum('yes','no') NOT NULL DEFAULT 'no',
-  `appendindex` enum('yes','no') NOT NULL DEFAULT 'yes',
   `cName` varchar(250) NOT NULL DEFAULT '',
   `cWebsite` varchar(250) NOT NULL DEFAULT '',
   `cTel` varchar(250) NOT NULL DEFAULT '',
@@ -1498,6 +1437,10 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `smtp_user` varchar(100) NOT NULL DEFAULT '',
   `smtp_pass` varchar(100) NOT NULL DEFAULT '',
   `smtp_port` varchar(100) NOT NULL DEFAULT '25',
+  `smtp_security` varchar(10) NOT NULL DEFAULT '',
+  `smtp_from` varchar(250) NOT NULL DEFAULT '',
+  `smtp_email` varchar(250) NOT NULL DEFAULT '',
+  `smtp_debug` enum('yes','no') NOT NULL DEFAULT 'no',
   `homeProdValue` int(3) NOT NULL DEFAULT '0',
   `homeProdType` varchar(10) NOT NULL DEFAULT 'latest',
   `homeProdCats` text,
@@ -1518,11 +1461,8 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `savedSearches` int(6) NOT NULL DEFAULT '7',
   `searchSlider` text,
   `searchTagsOnly` enum('yes','no') NOT NULL DEFAULT 'no',
-  `flashVideoWidth` int(4) NOT NULL DEFAULT '0',
-  `flashVideoHeight` int(4) NOT NULL DEFAULT '0',
   `jsDateFormat` varchar(10) NOT NULL DEFAULT 'DD-MM-YYYY',
   `jsWeekStart` tinyint(1) NOT NULL DEFAULT '0',
-  `helpTips` enum('yes','no') NOT NULL DEFAULT 'yes',
   `timezone` varchar(50) NOT NULL DEFAULT 'Europe/London',
   `mysqlDateFormat` varchar(10) NOT NULL DEFAULT '',
   `systemDateFormat` varchar(30) NOT NULL DEFAULT 'j F Y',
@@ -1543,15 +1483,10 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `hitCounter` enum('yes','no') NOT NULL DEFAULT 'yes',
   `menuSubCats` enum('yes','no') NOT NULL DEFAULT 'yes',
   `adminFolderName` varchar(100) NOT NULL DEFAULT 'admin',
-  `facebookLink` varchar(250) NOT NULL DEFAULT '',
-  `twitterLink` varchar(250) NOT NULL DEFAULT '',
-  `twitterUser` varchar(50) NOT NULL DEFAULT '',
   `twitterLatest` enum('yes','no') NOT NULL DEFAULT 'no',
   `globalDiscount` varchar(20) NOT NULL DEFAULT '0',
   `globalDiscountExpiry` date NOT NULL DEFAULT '0000-00-00',
   `enableRecentView` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `disqusShortName` varchar(250) NOT NULL DEFAULT '',
-  `disqusDevMode` enum('yes','no') NOT NULL DEFAULT 'yes',
   `freeDownloadRestriction` varchar(10) NOT NULL DEFAULT '0',
   `thumbWidth` int(4) NOT NULL DEFAULT '230',
   `thumbHeight` int(4) NOT NULL DEFAULT '200',
@@ -1564,7 +1499,6 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `showOutofStock` enum('cat','yes','no') NOT NULL DEFAULT 'yes',
   `enableCheckout` enum('yes','no') NOT NULL DEFAULT 'yes',
   `globalDownloadPath` varchar(250) NOT NULL DEFAULT '',
-  `optInNewsletter` enum('yes','no') NOT NULL DEFAULT 'yes',
   `maxProductChars` int(8) NOT NULL DEFAULT '200',
   `reduceDownloadStock` enum('yes','no') NOT NULL DEFAULT 'no',
   `enableBBCode` enum('yes','no') NOT NULL DEFAULT 'yes',
@@ -1575,9 +1509,6 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `downloadRestrictIPLock` int(7) NOT NULL DEFAULT '0',
   `downloadRestrictIPMail` enum('yes','no') NOT NULL DEFAULT 'no',
   `downloadRestrictIPGlobal` text,
-  `contactDisplay` varchar(250) NOT NULL DEFAULT '',
-  `leftBoxOrder` text,
-  `leftBoxCustom` text,
   `parentCatHomeDisplay` enum('yes','no') NOT NULL DEFAULT 'no',
   `isbnAPI` varchar(50) NOT NULL DEFAULT '',
   `offerInsurance` enum('yes','no') NOT NULL DEFAULT 'no',
@@ -1590,12 +1521,12 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `excludeFreePop` enum('yes','no') NOT NULL DEFAULT 'no',
   `priceTextDisplay` varchar(100) NOT NULL DEFAULT '',
   `en_sitemap` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `sitemapPref` enum('list','cat') NOT NULL DEFAULT 'list',
   `cubeUrl` varchar(250) NOT NULL DEFAULT '',
   `cubeAPI` varchar(250) NOT NULL DEFAULT '',
+  `guardianUrl` varchar(250) NOT NULL DEFAULT '',
+  `guardianAPI` varchar(250) NOT NULL DEFAULT '',
   `minCheckoutAmount` varchar(50) NOT NULL DEFAULT '',
   `showAttrStockLevel` enum('yes','no') NOT NULL DEFAULT 'no',
-  `qtyStockThreshold` int(5) NOT NULL DEFAULT '50',
   `productStockThreshold` int(5) NOT NULL DEFAULT '30',
   `autoClear` int(3) NOT NULL DEFAULT '7',
   `batchMail` text,
@@ -1604,15 +1535,76 @@ CREATE TABLE IF NOT EXISTS `mc_settings` (
   `menuBrandCount` enum('yes','no') NOT NULL DEFAULT 'no',
   `catGiftPos` varchar(10) NOT NULL DEFAULT 'end',
   `showBrands` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  `minPassValue` int(5) NOT NULL DEFAULT '8',
+  `en_wish` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `tweetlimit` int(5) NOT NULL DEFAULT '10',
+  `forcePass` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `en_create` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `en_create_mail` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `pdf` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `en_close` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `cache` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `cachetime` varchar(10) NOT NULL DEFAULT '30',
+  `tweet` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `presalenotify` enum('yes','no') NOT NULL DEFAULT 'no',
+  `presaleemail` text,
+  `layout` enum('grid','list') NOT NULL DEFAULT 'list',
+  `coupontax` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `shipopts` text,
+  `tc` enum('yes','no') NOT NULL DEFAULT 'no',
+  `tctext` text,
+  `tradeship` enum('yes','no') NOT NULL DEFAULT 'no',
+  `salereorder` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `hurrystock` int(7) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `mc_settings`
 --
 
-INSERT INTO `mc_settings` (`id`, `website`, `theme`, `email`, `addEmails`, `serverPath`, `languagePref`, `logoName`, `addThisModule`, `baseCurrency`, `currencyDisplayPref`, `logErrors`, `gatewayMode`, `enableSSL`, `enablePickUp`, `shipCountry`, `logFolderName`, `ifolder`, `metaKeys`, `metaDesc`, `enableCart`, `offlineDate`, `offlineText`, `offlineIP`, `en_rss`, `rssScroller`, `rssScrollerUrl`, `rssScrollerLimit`, `en_modr`, `appendindex`, `cName`, `cWebsite`, `cTel`, `cFax`, `cAddress`, `cOther`, `cReturns`, `smtp`, `smtp_host`, `smtp_user`, `smtp_pass`, `smtp_port`, `homeProdValue`, `homeProdType`, `homeProdCats`, `homeProdIDs`, `adminFooter`, `publicFooter`, `prodKey`, `encoderVersion`, `activateEmails`, `saleComparisonItems`, `productsPerPage`, `mostPopProducts`, `mostPopPref`, `latestProdLimit`, `latestProdDuration`, `searchLowStockLimit`, `enSearchLog`, `savedSearches`, `searchSlider`, `searchTagsOnly`, `flashVideoWidth`, `flashVideoHeight`, `jsDateFormat`, `jsWeekStart`, `helpTips`, `timezone`, `mysqlDateFormat`, `systemDateFormat`, `rssFeedLimit`, `minInvoiceDigits`, `invoiceNo`, `pendingAsComplete`, `freeShipThreshold`, `enableZip`, `zipCreationLimit`, `zipLimit`, `zipTimeOut`, `zipMemoryLimit`, `zipAdditionalFolder`, `enEntryLog`, `softwareVersion`, `smartQuotes`, `hitCounter`, `menuSubCats`, `adminFolderName`, `facebookLink`, `twitterLink`, `twitterUser`, `twitterLatest`, `globalDiscount`, `globalDiscountExpiry`, `enableRecentView`, `disqusShortName`, `disqusDevMode`, `freeDownloadRestriction`, `thumbWidth`, `thumbHeight`, `thumbQuality`, `thumbQualityPNG`, `aspectRatio`, `renamePics`, `tmbPrefix`, `imgPrefix`, `showOutofStock`, `enableCheckout`, `globalDownloadPath`, `optInNewsletter`, `maxProductChars`, `reduceDownloadStock`, `enableBBCode`, `downloadFolder`, `downloadRestrictIP`, `downloadRestrictIPLog`, `downloadRestrictIPCnt`, `downloadRestrictIPLock`, `downloadRestrictIPMail`, `downloadRestrictIPGlobal`, `contactDisplay`, `leftBoxOrder`, `leftBoxCustom`, `parentCatHomeDisplay`, `isbnAPI`, `offerInsurance`, `insuranceAmount`, `insuranceFilter`, `insuranceOptional`, `insuranceValue`, `insuranceInfo`, `freeTextDisplay`, `excludeFreePop`, `priceTextDisplay`, `en_sitemap`, `sitemapPref`, `cubeUrl`, `cubeAPI`, `minCheckoutAmount`, `showAttrStockLevel`, `qtyStockThreshold`, `productStockThreshold`, `autoClear`, `batchMail`, `freeAltRedirect`, `menuCatCount`, `menuBrandCount`, `catGiftPos`, `showBrands`) VALUES
-(1, 'Maian Cart', '_theme_default', 'j', '', '/var/www/webroot/', 'english', '', '', 'GBP', '&pound;{PRICE}', 'yes', 'test', 'no', 'yes', '183', 'logs', 'http://maiancart.demo.jelastic.com/', 'Meta keywords here..', 'Meta description here..', 'yes', '0000-00-00', '', '', 'yes', 'yes', 'http://feeds.bbc.co.uk/iplayer/highlights/tv', 10, 'no', 'yes', 'Maian Cart', 'http://maiancart.demo.jelastic.com/', '01234 456789', '01345 567890', '1 Some Street\r\nSomeplace\r\nSomewhere\r\nWS11 1AB', '', '', 'no', '', '', '', '587', 10, 'latest', '3,2,1', '', '<p><a href="http://www.yoursite.com">Your Website Link</a>. All Rights Reserved.</p>', '<a href="http://www.yoursite.com">Your Website Link</a>. All Rights Reserved.', '5A280CFAF2B24881D42DB58910888979C67FB73B1EC494F10EDA1606C9DC', '4.6', 'yes', 10, 8, 10, 'sales', 6, 'months', 5, 'yes', 7, 'a:4:{s:3:"min";s:1:"0";s:3:"max";s:3:"300";s:5:"start";s:1:"5";s:3:"end";s:3:"100";}', 'no', 425, 300, 'DD/MM/YYYY', 0, 'yes', 'UTC', '%e %b %Y', 'j F Y', 50, 5, 30, 'no', '0.00', 'no', '8388608', 2, 0, 0, 'additional-zip', 'yes', '2.1', 'yes', 'yes', 'yes', 'admin', 'http://www.facebook.com', 'http://www.twitter.com', '', 'no', '0', '0000-00-00', 'yes', '', 'yes', '0', 230, 200, 96, 9, 'yes', 'yes', 'tmb_', 'img_', 'cat', 'yes', '/var/www/webroot/ROOT/', 'yes', 300, 'no', 'yes', 'product-downloads', 'no', 'no', 0, 0, 'no', NULL, 'cName,cWebsite,cTel,cFax,cAddress,cOther', 'a:8:{i:0;a:2:{i:0;s:1:"1";i:1;s:3:"cat";}i:1;a:2:{i:0;s:1:"3";i:1;s:6:"points";}i:2;a:2:{i:0;s:1:"4";i:1;s:7:"popular";}i:3;a:2:{i:0;s:1:"7";i:1;s:6:"tweets";}i:4;a:2:{i:0;s:1:"5";i:1;s:6:"recent";}i:5;a:2:{i:0;s:1:"6";i:1;s:5:"links";}i:6;a:2:{i:0;s:1:"2";i:1;s:6:"brands";}i:7;a:2:{i:0;s:1:"8";i:1;s:3:"rss";}}', '', 'yes', '', 'no', '10', 'op4', 'no', '1.00', 'Lorem ipsum dolor sit amet consectetuer quis est at felis dui....', 'FREE', 'yes', '', 'yes', 'cat', '', '', '0.00', 'no', 50, 30, 0, NULL, '', 'no', 'no', 'end', 'yes');
+INSERT INTO `mc_settings` (`id`, `website`, `theme`, `theme2`, `tradetheme`, `email`, `addEmails`, `serverPath`, `languagePref`, `logoName`, `baseCurrency`, `currencyDisplayPref`, `logErrors`, `gatewayMode`, `enableSSL`, `enablePickUp`, `shipCountry`, `logFolderName`, `ifolder`, `metaKeys`, `metaDesc`, `enableCart`, `offlineDate`, `offlineText`, `offlineIP`, `en_rss`, `rssScroller`, `rssScrollerUrl`, `rssScrollerLimit`, `en_modr`, `cName`, `cWebsite`, `cTel`, `cFax`, `cAddress`, `cOther`, `cReturns`, `smtp`, `smtp_host`, `smtp_user`, `smtp_pass`, `smtp_port`, `smtp_security`, `smtp_from`, `smtp_email`, `smtp_debug`, `homeProdValue`, `homeProdType`, `homeProdCats`, `homeProdIDs`, `adminFooter`, `publicFooter`, `prodKey`, `encoderVersion`, `activateEmails`, `saleComparisonItems`, `productsPerPage`, `mostPopProducts`, `mostPopPref`, `latestProdLimit`, `latestProdDuration`, `searchLowStockLimit`, `enSearchLog`, `savedSearches`, `searchSlider`, `searchTagsOnly`, `jsDateFormat`, `jsWeekStart`, `timezone`, `mysqlDateFormat`, `systemDateFormat`, `rssFeedLimit`, `minInvoiceDigits`, `invoiceNo`, `pendingAsComplete`, `freeShipThreshold`, `enableZip`, `zipCreationLimit`, `zipLimit`, `zipTimeOut`, `zipMemoryLimit`, `zipAdditionalFolder`, `enEntryLog`, `softwareVersion`, `smartQuotes`, `hitCounter`, `menuSubCats`, `adminFolderName`, `twitterLatest`, `globalDiscount`, `globalDiscountExpiry`, `enableRecentView`, `freeDownloadRestriction`, `thumbWidth`, `thumbHeight`, `thumbQuality`, `thumbQualityPNG`, `aspectRatio`, `renamePics`, `tmbPrefix`, `imgPrefix`, `showOutofStock`, `enableCheckout`, `globalDownloadPath`, `maxProductChars`, `reduceDownloadStock`, `enableBBCode`, `downloadFolder`, `downloadRestrictIP`, `downloadRestrictIPLog`, `downloadRestrictIPCnt`, `downloadRestrictIPLock`, `downloadRestrictIPMail`, `downloadRestrictIPGlobal`, `parentCatHomeDisplay`, `isbnAPI`, `offerInsurance`, `insuranceAmount`, `insuranceFilter`, `insuranceOptional`, `insuranceValue`, `insuranceInfo`, `freeTextDisplay`, `excludeFreePop`, `priceTextDisplay`, `en_sitemap`, `cubeUrl`, `cubeAPI`, `guardianUrl`, `guardianAPI`, `minCheckoutAmount`, `showAttrStockLevel`, `productStockThreshold`, `autoClear`, `batchMail`, `freeAltRedirect`, `menuCatCount`, `menuBrandCount`, `catGiftPos`, `showBrands`, `minPassValue`, `en_wish`, `tweetlimit`, `forcePass`, `en_create`, `en_create_mail`, `pdf`, `en_close`, `cache`, `cachetime`, `tweet`, `presalenotify`, `presaleemail`, `layout`, `coupontax`, `shipopts`, `tc`, `tctext`, `tradeship`, `salereorder`, `hurrystock`) VALUES
+(1, 'Maian Cart', '_theme_default', '_theme_default', '', 'alexey.lazarenko@jelastic.com', '', '/var/www/webroot/ROOT/store', 'english', '', 'GBP', '&pound;{PRICE}', 'yes', 'test', 'no', 'yes', '0', 'logs', 'http://maiancart.demo.jelastic.com/store', '', '', 'yes', '0000-00-00', '', '', 'yes', 'no', '', 10, 'no', 'Maian Cart', 'http://maiancart.demo.jelastic.com/store', '01234 456789', '01345 567890', '1 Company Street\r\nSomeplace\r\nSomewhere\r\nPost Code', '', 'Return info goes here..', 'yes', '', '', '', '587', '', '', '', 'no', 10, 'latest', '', '', 'Add your own footer in your admin control panel: System > Edit Footers', 'Add your own footer in your admin control panel: System > Edit Footers', 'F3E06DBF69502DF769C1B34702F4C23F28E4CCEBB1A0A50C11087E7B8F70', '1.0', 'yes', 10, 8, 10, 'sales', 36, 'months', 5, 'yes', 7, 'a:4:{s:3:\"min\";s:1:\"0\";s:3:\"max\";s:3:\"300\";s:5:\"start\";s:1:\"5\";s:3:\"end\";s:3:\"100\";}', 'no', 'DD/MM/YYYY', 0, 'UTC', '%e %b %Y', 'F j, Y', 50, 5, 0, 'no', '0.00', 'yes', '0', 2, 0, 0, 'additional-zip', 'yes', '3.3', 'no', 'yes', 'yes', 'admin', 'no', '0', '0000-00-00', 'yes', '0', 230, 200, 96, 9, 'yes', 'yes', 'tmb_', 'img_', 'cat', 'yes', '/var/www/webroot/ROOT/store', 300, 'no', 'yes', 'product-downloads', 'no', 'yes', 0, 5, 'yes', '', 'yes', '', 'yes', '10', 'op2', 'no', '0.00', '', 'FREE', 'yes', '', 'yes', '', '', '', '', '0.00', 'no', 30, 30, NULL, '', 'no', 'no', '16', 'no', 10, 'yes', 5, 'yes', 'yes', 'yes', 'yes', 'yes', 'no', '30', 'no', 'no', '', 'list', 'yes', '', 'no', '', 'no', 'yes', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_social`
+--
+
+CREATE TABLE `mc_social` (
+  `id` int(5) NOT NULL,
+  `desc` varchar(50) NOT NULL DEFAULT '',
+  `param` text,
+  `value` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `mc_social`
+--
+
+INSERT INTO `mc_social` (`id`, `desc`, `param`, `value`) VALUES
+(1, 'addthis', 'code', ''),
+(2, 'disqus', 'disname', ''),
+(3, 'disqus', 'discat', ''),
+(4, 'pushover', 'pushuser', ''),
+(5, 'pushover', 'pushtoken', ''),
+(6, 'facebook', 'fbimage', ''),
+(7, 'facebook', 'fbinsights', ''),
+(8, 'twitter', 'conkey', ''),
+(9, 'twitter', 'consecret', ''),
+(10, 'twitter', 'token', ''),
+(11, 'twitter', 'key', ''),
+(12, 'twitter', 'username', ''),
+(13, 'links', 'facebook', 'https://www.facebook.com'),
+(14, 'links', 'twitter', 'https://www.twitter.com'),
+(15, 'links', 'instagram', 'https://www.instagram.com'),
+(16, 'links', 'youtube', 'https://www.youtube.com'),
+(17, 'links', 'reddit', 'https://www.reddit.com'),
+(18, 'links', 'pinterest', 'https://www.pinterest.com'),
+(19, 'links', 'flickr', 'https://www.flickr.com'),
+(20, 'struct', 'twitter', 'yes'),
+(21, 'struct', 'fb', 'yes'),
+(22, 'struct', 'google', 'yes');
 
 -- --------------------------------------------------------
 
@@ -1620,17 +1612,17 @@ INSERT INTO `mc_settings` (`id`, `website`, `theme`, `email`, `addEmails`, `serv
 -- Структура таблицы `mc_statuses`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_statuses` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_statuses` (
+  `id` int(10) UNSIGNED NOT NULL,
   `saleID` int(7) NOT NULL DEFAULT '0',
   `statusNotes` text,
   `dateAdded` date NOT NULL DEFAULT '0000-00-00',
   `timeAdded` time NOT NULL DEFAULT '00:00:00',
   `orderStatus` varchar(20) NOT NULL DEFAULT '',
   `adminUser` varchar(100) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `saleid_index` (`saleID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `visacc` enum('yes','no') NOT NULL DEFAULT 'no',
+  `account` int(8) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1638,12 +1630,12 @@ CREATE TABLE IF NOT EXISTS `mc_statuses` (
 -- Структура таблицы `mc_status_text`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_status_text` (
-  `id` int(7) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_status_text` (
+  `id` int(7) NOT NULL,
   `statTitle` varchar(250) NOT NULL DEFAULT '',
   `statText` text,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `ref` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1651,16 +1643,13 @@ CREATE TABLE IF NOT EXISTS `mc_status_text` (
 -- Структура таблицы `mc_tare`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_tare` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_tare` (
+  `id` int(4) UNSIGNED NOT NULL,
   `rWeightFrom` varchar(50) NOT NULL DEFAULT '0',
   `rWeightTo` varchar(50) NOT NULL DEFAULT '0',
   `rCost` varchar(20) NOT NULL DEFAULT '',
-  `rService` int(6) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `from_index` (`rWeightFrom`),
-  KEY `to_index` (`rWeightTo`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `rService` int(6) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1668,16 +1657,38 @@ CREATE TABLE IF NOT EXISTS `mc_tare` (
 -- Структура таблицы `mc_themes`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_themes` (
-  `id` int(7) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_themes` (
+  `id` int(7) UNSIGNED NOT NULL,
   `theme` varchar(200) NOT NULL DEFAULT '',
   `from` date NOT NULL DEFAULT '0000-00-00',
   `to` date NOT NULL DEFAULT '0000-00-00',
-  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `from_index` (`from`),
-  KEY `to_index` (`to`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_tracker`
+--
+
+CREATE TABLE `mc_tracker` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `name` varchar(250) NOT NULL DEFAULT '',
+  `code` varchar(100) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `mc_tracker_clicks`
+--
+
+CREATE TABLE `mc_tracker_clicks` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `code` varchar(100) NOT NULL DEFAULT '',
+  `clicked` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ip` varchar(250) NOT NULL DEFAULT ''
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1685,17 +1696,19 @@ CREATE TABLE IF NOT EXISTS `mc_themes` (
 -- Структура таблицы `mc_users`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_users` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_users` (
+  `id` int(10) UNSIGNED NOT NULL,
   `userName` varchar(100) NOT NULL DEFAULT '',
   `userPass` varchar(40) NOT NULL DEFAULT '',
+  `userEmail` text,
   `userType` enum('admin','restricted') NOT NULL DEFAULT 'restricted',
   `userPriv` enum('yes','no') NOT NULL DEFAULT 'no',
   `accessPages` text,
   `enableUser` enum('yes','no') NOT NULL DEFAULT 'no',
   `lastLogin` varchar(250) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+  `userNotify` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `tweet` enum('yes','no') NOT NULL DEFAULT 'no'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1703,25 +1716,13 @@ CREATE TABLE IF NOT EXISTS `mc_users` (
 -- Структура таблицы `mc_zones`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_zones` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_zones` (
+  `id` int(4) UNSIGNED NOT NULL,
   `zName` varchar(250) NOT NULL DEFAULT '',
   `zCountry` int(5) NOT NULL DEFAULT '0',
   `zRate` varchar(10) NOT NULL DEFAULT '',
-  `zShipping` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `ctry_index` (`zCountry`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
-
---
--- Дамп данных таблицы `mc_zones`
---
-
-INSERT INTO `mc_zones` (`id`, `zName`, `zCountry`, `zRate`, `zShipping`) VALUES
-(1, 'Zone 1', 183, '20', 'yes'),
-(2, 'Zone 2', 183, '20', 'yes'),
-(3, 'Zone 3', 183, '20', 'yes'),
-(4, 'Zone 4', 183, '20', 'yes');
+  `zShipping` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1729,28 +1730,851 @@ INSERT INTO `mc_zones` (`id`, `zName`, `zCountry`, `zRate`, `zShipping`) VALUES
 -- Структура таблицы `mc_zone_areas`
 --
 
-CREATE TABLE IF NOT EXISTS `mc_zone_areas` (
-  `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
+CREATE TABLE `mc_zone_areas` (
+  `id` int(4) UNSIGNED NOT NULL,
   `inZone` int(5) NOT NULL DEFAULT '0',
   `areaName` varchar(200) NOT NULL DEFAULT '',
   `zCountry` int(5) NOT NULL DEFAULT '0',
   `zRate` varchar(10) NOT NULL DEFAULT '',
-  `zShipping` enum('yes','no') NOT NULL DEFAULT 'yes',
-  PRIMARY KEY (`id`),
-  KEY `zone_index` (`inZone`),
-  KEY `ctry_index` (`zCountry`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
+  `zShipping` enum('yes','no') NOT NULL DEFAULT 'yes'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
--- Дамп данных таблицы `mc_zone_areas`
+-- Индексы сохранённых таблиц
 --
 
-INSERT INTO `mc_zone_areas` (`id`, `inZone`, `areaName`, `zCountry`, `zRate`, `zShipping`) VALUES
-(1, 1, 'UK Mainland', 183, '20', 'yes'),
-(2, 2, 'South of Scotland', 183, '20', 'yes'),
-(3, 2, 'North of Scotland & Northern Ireland', 183, '20', 'yes'),
-(4, 2, 'Republic of Ireland', 183, '20', 'yes'),
-(5, 3, 'UK Islands & Channel Islands', 183, '20', 'yes');
+--
+-- Индексы таблицы `mc_accounts`
+--
+ALTER TABLE `mc_accounts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `em_index` (`email`),
+  ADD KEY `nm_index` (`name`);
+
+--
+-- Индексы таблицы `mc_accounts_search`
+--
+ALTER TABLE `mc_accounts_search`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code_index` (`code`);
+
+--
+-- Индексы таблицы `mc_accounts_wish`
+--
+ALTER TABLE `mc_accounts_wish`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `account_index` (`account`);
+
+--
+-- Индексы таблицы `mc_activation_history`
+--
+ALTER TABLE `mc_activation_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `saleid_index` (`saleID`);
+
+--
+-- Индексы таблицы `mc_addressbook`
+--
+ALTER TABLE `mc_addressbook`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ac_index` (`account`);
+
+--
+-- Индексы таблицы `mc_attachments`
+--
+ALTER TABLE `mc_attachments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `status_index` (`statusID`),
+  ADD KEY `sale_index` (`saleID`);
+
+--
+-- Индексы таблицы `mc_attributes`
+--
+ALTER TABLE `mc_attributes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prod_index` (`productID`),
+  ADD KEY `group_index` (`attrGroup`);
+
+--
+-- Индексы таблицы `mc_attr_groups`
+--
+ALTER TABLE `mc_attr_groups`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prod_index` (`productID`);
+
+--
+-- Индексы таблицы `mc_banners`
+--
+ALTER TABLE `mc_banners`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_blog`
+--
+ALTER TABLE `mc_blog`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_boxes`
+--
+ALTER TABLE `mc_boxes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_brands`
+--
+ALTER TABLE `mc_brands`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_campaigns`
+--
+ALTER TABLE `mc_campaigns`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code_index` (`cDiscountCode`);
+
+--
+-- Индексы таблицы `mc_categories`
+--
+ALTER TABLE `mc_categories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cat_index` (`catLevel`),
+  ADD KEY `child_index` (`childOf`),
+  ADD KEY `en_index` (`enCat`);
+
+--
+-- Индексы таблицы `mc_click_history`
+--
+ALTER TABLE `mc_click_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `saleid_index` (`saleID`);
+
+--
+-- Индексы таблицы `mc_comparisons`
+--
+ALTER TABLE `mc_comparisons`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sale_index` (`saleID`),
+  ADD KEY `this_index` (`thisProduct`),
+  ADD KEY `that_index` (`thatProduct`);
+
+--
+-- Индексы таблицы `mc_countries`
+--
+ALTER TABLE `mc_countries`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_coupons`
+--
+ALTER TABLE `mc_coupons`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code_index` (`cDiscountCode`),
+  ADD KEY `sale_index` (`saleID`);
+
+--
+-- Индексы таблицы `mc_currencies`
+--
+ALTER TABLE `mc_currencies`
+  ADD PRIMARY KEY (`currency`);
+
+--
+-- Индексы таблицы `mc_dropshippers`
+--
+ALTER TABLE `mc_dropshippers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_entry_log`
+--
+ALTER TABLE `mc_entry_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_index` (`userid`);
+
+--
+-- Индексы таблицы `mc_flat`
+--
+ALTER TABLE `mc_flat`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `zone_index` (`inZone`);
+
+--
+-- Индексы таблицы `mc_giftcerts`
+--
+ALTER TABLE `mc_giftcerts`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_giftcodes`
+--
+ALTER TABLE `mc_giftcodes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `gift_index` (`giftID`),
+  ADD KEY `sale_index` (`saleID`),
+  ADD KEY `code_index` (`code`),
+  ADD KEY `purc_index` (`purchaseID`);
+
+--
+-- Индексы таблицы `mc_methods`
+--
+ALTER TABLE `mc_methods`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_methods_params`
+--
+ALTER TABLE `mc_methods_params`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mthd_index` (`method`);
+
+--
+-- Индексы таблицы `mc_mp3`
+--
+ALTER TABLE `mc_mp3`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prod_index` (`product_id`);
+
+--
+-- Индексы таблицы `mc_newpages`
+--
+ALTER TABLE `mc_newpages`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_newsletter`
+--
+ALTER TABLE `mc_newsletter`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `email_index` (`emailAddress`);
+
+--
+-- Индексы таблицы `mc_newstemplates`
+--
+ALTER TABLE `mc_newstemplates`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_news_ticker`
+--
+ALTER TABLE `mc_news_ticker`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_paystatuses`
+--
+ALTER TABLE `mc_paystatuses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `mthd_index` (`pMethod`);
+
+--
+-- Индексы таблицы `mc_pdf`
+--
+ALTER TABLE `mc_pdf`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_per`
+--
+ALTER TABLE `mc_per`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `zone_index` (`inZone`);
+
+--
+-- Индексы таблицы `mc_percent`
+--
+ALTER TABLE `mc_percent`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `zone_index` (`inZone`),
+  ADD KEY `from_index` (`priceFrom`),
+  ADD KEY `to_index` (`priceTo`),
+  ADD KEY `en_index` (`enabled`);
+
+--
+-- Индексы таблицы `mc_personalisation`
+--
+ALTER TABLE `mc_personalisation`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_index` (`productID`);
+
+--
+-- Индексы таблицы `mc_pictures`
+--
+ALTER TABLE `mc_pictures`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `product_index` (`product_id`);
+
+--
+-- Индексы таблицы `mc_price_points`
+--
+ALTER TABLE `mc_price_points`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `from_index` (`priceFrom`),
+  ADD KEY `to_index` (`priceTo`);
+
+--
+-- Индексы таблицы `mc_products`
+--
+ALTER TABLE `mc_products`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pDownload` (`pDownload`),
+  ADD KEY `code_index` (`pCode`),
+  ADD KEY `name_index` (`pName`),
+  ADD KEY `stock_index` (`pStock`),
+  ADD KEY `price_index` (`pPrice`),
+  ADD KEY `cost_index` (`pPurPrice`),
+  ADD KEY `en_index` (`pEnable`),
+  ADD KEY `wght_index` (`pWeight`);
+
+--
+-- Индексы таблицы `mc_prod_brand`
+--
+ALTER TABLE `mc_prod_brand`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prod_index` (`product`),
+  ADD KEY `brd_index` (`brand`);
+
+--
+-- Индексы таблицы `mc_prod_category`
+--
+ALTER TABLE `mc_prod_category`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prod_index` (`product`),
+  ADD KEY `cat_index` (`category`);
+
+--
+-- Индексы таблицы `mc_prod_relation`
+--
+ALTER TABLE `mc_prod_relation`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `prod_index` (`product`),
+  ADD KEY `rel_index` (`related`);
+
+--
+-- Индексы таблицы `mc_purchases`
+--
+ALTER TABLE `mc_purchases`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `saleid_index` (`saleID`),
+  ADD KEY `product_index` (`productID`),
+  ADD KEY `cat_index` (`categoryID`),
+  ADD KEY `conf_index` (`saleConfirmation`),
+  ADD KEY `dcode_index` (`downloadCode`),
+  ADD KEY `ld_index` (`liveDownload`);
+
+--
+-- Индексы таблицы `mc_purch_atts`
+--
+ALTER TABLE `mc_purch_atts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `saleid_index` (`saleID`),
+  ADD KEY `prodid_index` (`productID`),
+  ADD KEY `purid_index` (`purchaseID`),
+  ADD KEY `attid_index` (`attributeID`);
+
+--
+-- Индексы таблицы `mc_purch_pers`
+--
+ALTER TABLE `mc_purch_pers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `saleid_index` (`saleID`),
+  ADD KEY `prod_index` (`productID`),
+  ADD KEY `purc_index` (`purchaseID`),
+  ADD KEY `pers_index` (`personalisationID`);
+
+--
+-- Индексы таблицы `mc_qtyrates`
+--
+ALTER TABLE `mc_qtyrates`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `zone_index` (`inZone`),
+  ADD KEY `from_index` (`qtyFrom`),
+  ADD KEY `to_index` (`qtyTo`),
+  ADD KEY `en_index` (`enabled`);
+
+--
+-- Индексы таблицы `mc_rates`
+--
+ALTER TABLE `mc_rates`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `from_index` (`rWeightFrom`),
+  ADD KEY `to_index` (`rWeightTo`);
+
+--
+-- Индексы таблицы `mc_sales`
+--
+ALTER TABLE `mc_sales`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code_index` (`buyCode`),
+  ADD KEY `acc_index` (`account`),
+  ADD KEY `conf_index` (`saleConfirmation`);
+
+--
+-- Индексы таблицы `mc_search_index`
+--
+ALTER TABLE `mc_search_index`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code_index` (`searchCode`);
+
+--
+-- Индексы таблицы `mc_search_log`
+--
+ALTER TABLE `mc_search_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_services`
+--
+ALTER TABLE `mc_services`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `zone_index` (`inZone`);
+
+--
+-- Индексы таблицы `mc_settings`
+--
+ALTER TABLE `mc_settings`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_social`
+--
+ALTER TABLE `mc_social`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `descK` (`desc`);
+
+--
+-- Индексы таблицы `mc_statuses`
+--
+ALTER TABLE `mc_statuses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `saleid_index` (`saleID`);
+
+--
+-- Индексы таблицы `mc_status_text`
+--
+ALTER TABLE `mc_status_text`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_tare`
+--
+ALTER TABLE `mc_tare`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `from_index` (`rWeightFrom`),
+  ADD KEY `to_index` (`rWeightTo`);
+
+--
+-- Индексы таблицы `mc_themes`
+--
+ALTER TABLE `mc_themes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `from_index` (`from`),
+  ADD KEY `to_index` (`to`);
+
+--
+-- Индексы таблицы `mc_tracker`
+--
+ALTER TABLE `mc_tracker`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code` (`code`);
+
+--
+-- Индексы таблицы `mc_tracker_clicks`
+--
+ALTER TABLE `mc_tracker_clicks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `code` (`code`);
+
+--
+-- Индексы таблицы `mc_users`
+--
+ALTER TABLE `mc_users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `mc_zones`
+--
+ALTER TABLE `mc_zones`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ctry_index` (`zCountry`);
+
+--
+-- Индексы таблицы `mc_zone_areas`
+--
+ALTER TABLE `mc_zone_areas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `zone_index` (`inZone`),
+  ADD KEY `ctry_index` (`zCountry`);
+
+--
+-- AUTO_INCREMENT для сохранённых таблиц
+--
+
+--
+-- AUTO_INCREMENT для таблицы `mc_accounts`
+--
+ALTER TABLE `mc_accounts`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_accounts_search`
+--
+ALTER TABLE `mc_accounts_search`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_accounts_wish`
+--
+ALTER TABLE `mc_accounts_wish`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_activation_history`
+--
+ALTER TABLE `mc_activation_history`
+  MODIFY `id` int(7) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_addressbook`
+--
+ALTER TABLE `mc_addressbook`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_attachments`
+--
+ALTER TABLE `mc_attachments`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_attributes`
+--
+ALTER TABLE `mc_attributes`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_attr_groups`
+--
+ALTER TABLE `mc_attr_groups`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_banners`
+--
+ALTER TABLE `mc_banners`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_blog`
+--
+ALTER TABLE `mc_blog`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_boxes`
+--
+ALTER TABLE `mc_boxes`
+  MODIFY `id` tinyint(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_brands`
+--
+ALTER TABLE `mc_brands`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_campaigns`
+--
+ALTER TABLE `mc_campaigns`
+  MODIFY `id` mediumint(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_categories`
+--
+ALTER TABLE `mc_categories`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_click_history`
+--
+ALTER TABLE `mc_click_history`
+  MODIFY `id` int(7) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_comparisons`
+--
+ALTER TABLE `mc_comparisons`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_countries`
+--
+ALTER TABLE `mc_countries`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=265;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_coupons`
+--
+ALTER TABLE `mc_coupons`
+  MODIFY `id` mediumint(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_dropshippers`
+--
+ALTER TABLE `mc_dropshippers`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_entry_log`
+--
+ALTER TABLE `mc_entry_log`
+  MODIFY `id` int(7) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_flat`
+--
+ALTER TABLE `mc_flat`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_giftcerts`
+--
+ALTER TABLE `mc_giftcerts`
+  MODIFY `id` mediumint(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_giftcodes`
+--
+ALTER TABLE `mc_giftcodes`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_methods`
+--
+ALTER TABLE `mc_methods`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_methods_params`
+--
+ALTER TABLE `mc_methods_params`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_mp3`
+--
+ALTER TABLE `mc_mp3`
+  MODIFY `id` mediumint(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_newpages`
+--
+ALTER TABLE `mc_newpages`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_newsletter`
+--
+ALTER TABLE `mc_newsletter`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_newstemplates`
+--
+ALTER TABLE `mc_newstemplates`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_news_ticker`
+--
+ALTER TABLE `mc_news_ticker`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_paystatuses`
+--
+ALTER TABLE `mc_paystatuses`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_pdf`
+--
+ALTER TABLE `mc_pdf`
+  MODIFY `id` tinyint(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_per`
+--
+ALTER TABLE `mc_per`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_percent`
+--
+ALTER TABLE `mc_percent`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_personalisation`
+--
+ALTER TABLE `mc_personalisation`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_pictures`
+--
+ALTER TABLE `mc_pictures`
+  MODIFY `id` mediumint(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_price_points`
+--
+ALTER TABLE `mc_price_points`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_products`
+--
+ALTER TABLE `mc_products`
+  MODIFY `id` mediumint(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_prod_brand`
+--
+ALTER TABLE `mc_prod_brand`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_prod_category`
+--
+ALTER TABLE `mc_prod_category`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_prod_relation`
+--
+ALTER TABLE `mc_prod_relation`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_purchases`
+--
+ALTER TABLE `mc_purchases`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_purch_atts`
+--
+ALTER TABLE `mc_purch_atts`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_purch_pers`
+--
+ALTER TABLE `mc_purch_pers`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_qtyrates`
+--
+ALTER TABLE `mc_qtyrates`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_rates`
+--
+ALTER TABLE `mc_rates`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_sales`
+--
+ALTER TABLE `mc_sales`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_search_index`
+--
+ALTER TABLE `mc_search_index`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_search_log`
+--
+ALTER TABLE `mc_search_log`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_services`
+--
+ALTER TABLE `mc_services`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_settings`
+--
+ALTER TABLE `mc_settings`
+  MODIFY `id` tinyint(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_social`
+--
+ALTER TABLE `mc_social`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_statuses`
+--
+ALTER TABLE `mc_statuses`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_status_text`
+--
+ALTER TABLE `mc_status_text`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_tare`
+--
+ALTER TABLE `mc_tare`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_themes`
+--
+ALTER TABLE `mc_themes`
+  MODIFY `id` int(7) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_tracker`
+--
+ALTER TABLE `mc_tracker`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_tracker_clicks`
+--
+ALTER TABLE `mc_tracker_clicks`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_users`
+--
+ALTER TABLE `mc_users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_zones`
+--
+ALTER TABLE `mc_zones`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `mc_zone_areas`
+--
+ALTER TABLE `mc_zone_areas`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
