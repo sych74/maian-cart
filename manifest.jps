@@ -17,7 +17,6 @@ globals:
   CONNECT_PHP: /var/www/webroot/ROOT/control/connect.php
   ACCESS_PHP: /var/www/webroot/ROOT/admin/control/access.php
 
-engine: php5.4
 nodes:
 - cloudlets: 8
   nodeType: apache2
