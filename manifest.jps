@@ -26,7 +26,7 @@ nodes:
     
 onInstall:
   - deploy:
-      archive: https://www.maiancart.com/download/maian_cart.zip
+      archive: https://www.maianmedia.com/downloads/maian_cart.zip
       name: MaianCart-latest.zip
       context: ROOT
   - cmd[cp]: mv ${SERVER_WEBROOT}/ROOT/store/* /${SERVER_WEBROOT}/ROOT/ && rm -rf ${SERVER_WEBROOT}/ROOT/store
