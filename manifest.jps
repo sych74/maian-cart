@@ -13,16 +13,16 @@ logo: https://download.jelastic.com/public.php?service=files&t=6bfa0ab81d533fcd4
 description: Maian Cart is a fast, robust & FREE e-commerce platform built using PHP & MySQL which has all the features you need to run your online store.
 
 globals:
-  ADMIN_DB_PASS: ${fn.password}
+  ADMIN_DB_PASS: ${fn.password(10)}
   CONNECT_PHP: /var/www/webroot/ROOT/control/connect.php
   ACCESS_PHP: /var/www/webroot/ROOT/admin/control/access.php
 
 nodes:
 - cloudlets: 8
   nodeType: apache2
-  engine: php8.0
+  engine: php8.2
 - cloudlets: 8
-  nodeType: mysql5
+  nodeType: mariadb10
     
 onInstall:
   - deploy:
@@ -30,15 +30,12 @@ onInstall:
       name: MaianCart-latest.zip
       context: ROOT
   - cmd[cp]: mv ${SERVER_WEBROOT}/ROOT/store/* /${SERVER_WEBROOT}/ROOT/ && rm -rf ${SERVER_WEBROOT}/ROOT/store
-  - prepareSqlDatabase:
-      nodeType: mysql5
-      loginCredentials:
-        user: root
-        password: ${nodes.mysql5.password}
-      newDatabaseName: maiancart
-      newDatabaseUser:
-        name: maiancart
-        password: ${globals.ADMIN_DB_PASS}
+  
+  - cmd[sqldb]: |-
+      MYSQL_PWD=${nodes.sqldb.password} mysql -uroot -e "CREATE DATABASE maiancart;"
+      MYSQL_PWD=${nodes.sqldb.password} mysql -uroot -e "CREATE USER 'maiancart'@'%' IDENTIFIED BY '${globals.ADMIN_DB_PASS}';"
+      MYSQL_PWD=${nodes.sqldb.password} mysql -uroot -e "GRANT ALL PRIVILEGES ON maiancart.* TO 'maiancart'@'%' WITH GRANT OPTION;"
+
   - replaceInFile:
     - path: /etc/php.ini
       nodeType: apache2
@@ -49,7 +46,7 @@ onInstall:
         replacement: extension=mysql.so
       - pattern: ".*extension=gd.so"
         replacement: extension=gd.so
-    - nodeType: mysql5
+    - nodeType: mariadb10
       path: /etc/my.cnf
       replacements:
       - replacement: |-
@@ -57,7 +54,7 @@ onInstall:
           sql_mode=NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
         pattern: user=mysql
   - cmd [cp]:
-    - sed -i "s|define('DB_HOST', 'Host name goes here..');|define('DB_HOST', '${nodes.mysql5.address}');|g" ${globals.CONNECT_PHP}
+    - sed -i "s|define('DB_HOST', 'Host name goes here..');|define('DB_HOST', '${nodes.sqldb.address}');|g" ${globals.CONNECT_PHP}
     - sed -i "s|define('DB_USER', 'Database user goes here..');|define('DB_USER', 'maiancart');|g" ${globals.CONNECT_PHP}
     - sed -i "s|define('DB_PASS', 'Database password goes here..');|define('DB_PASS', '${globals.ADMIN_DB_PASS}');|g" ${globals.CONNECT_PHP}
     - sed -i "s|define('DB_NAME', 'Database name goes here..');|define('DB_NAME', 'maiancart');|g" ${globals.CONNECT_PHP}
