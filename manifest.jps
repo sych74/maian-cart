@@ -8,8 +8,8 @@ categories:
 - apps/e-commerce
 - apps/sales-and-marketing
 
-homepage: http://www.maiancart.com
-logo: https://download.jelastic.com/public.php?service=files&t=6bfa0ab81d533fcd446efd70b4ddf4f7&download
+homepage: https://www.maiancart.com/
+logo: images/logo.png
 description: Maian Cart is a fast, robust & FREE e-commerce platform built using PHP & MySQL which has all the features you need to run your online store.
 
 globals:
@@ -76,4 +76,4 @@ success: |
   Admin name: admin  
   Password: ${user.appPassword}  
   
-  To add a custom domain name for your Maian Cart installation follow the steps described in our [documentation](http://docs.jelastic.com/custom-domains)
+  To add a custom domain name for your Maian Cart installation follow the steps described in our [documentation](https://www.virtuozzo.com/application-platform-docs/custom-domains/).
