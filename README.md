@@ -11,7 +11,7 @@ The package deploys the [Maian Cart](https://www.maiancart.com/) solution - a so
 
 This package creates a dedicated Maian Cart environment that contains one application server and one database container. It automatically deploys and sets the Maian Cart application. The automatic vertical scaling is enabled out of the box, and [horizontal scaling](https://www.virtuozzo.com/application-platform-docs/automatic-horizontal-scaling/) can be configured (if needed). The default software stacks utilized in the package are the following:
 
-- Apache 2 PHP application server (PHP 8.2)
+- Apache 2 PHP application server (PHP 8.1)
 - MariaDB 10 database
 - Maian Cart 3.8
 
