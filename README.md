@@ -4,7 +4,7 @@
 
 # Maian Cart
 
-The package deploys the [Maian Cart](https://www.maiancart.com/) solution - a solid self-hosted platform to sell your products. Maian Cart is a comprehensive e-commerce solution designed to help businesses create and manage online stores with ease. It offers a wide range of features including product management, order processing, customer management, and various payment gateway integrations.
+The package deploys the [Maian Cart](https://www.maiancart.com/) solution - a solid self-hosted platform to sell your products. Maian Cart is a comprehensive e-commerce solution designed to help businesses create and manage online stores with ease. It offers a wide range of features, including product management, order processing, customer management, and various payment gateway integrations.
 
 
 ## Environment Topology
