@@ -8,9 +8,9 @@ categories:
 - apps/e-commerce
 - apps/sales-and-marketing
 
-homepage: http://www.maiancart.com
-logo: https://download.jelastic.com/public.php?service=files&t=6bfa0ab81d533fcd446efd70b4ddf4f7&download
-description: Maian Cart is a fast, robust & FREE e-commerce platform built using PHP & MySQL which has all the features you need to run your online store.
+homepage: https://www.maiancart.com/
+logo: images/logo.png
+description: Maian Cart is a fast, robust, and free e-commerce platform built using PHP & MySQL. It provides all the features you need to run your online store, including product management, order processing, customer management, and more.
 
 globals:
   ADMIN_DB_PASS: ${fn.password(10)}
@@ -71,9 +71,10 @@ onInstall:
     - "(curl http://${env.domain}/install/?s=1; curl http://${env.domain}/install/?s=2; curl http://${env.domain}/install/?s=3; curl -H 'Content-Type: application/x-www-form-urlencoded' -d 'mysql_version=MySQL5&charset=utf8_general_ci&tables=yes' http://${env.domain}/install/?s=4; curl -H 'Content-Type: application/x-www-form-urlencoded' -d 'website=Jelastic&email=${user.email}&storeInfo=yes' http://${env.domain}/install/?s=5; curl -H 'Content-Type: application/x-www-form-urlencoded' -d 'finish=yes' http://${env.domain}/install/?s=6; curl http://${env.domain}/install/?s=7) > /var/www/webroot/ROOT/install_logs.log"
     - rm -rf /var/www/webroot/ROOT/install
 success: |
-  Below you will find your admin panel link, username and password.  
-  Admin panel URL: [${env.protocol}://${env.domain}/admin/](${env.protocol}://${env.domain}/admin/)  
-  Admin name: admin  
-  Password: ${user.appPassword}  
+  Use the following credentials to access the Maian Cart admin panel:
   
-  To add a custom domain name for your Maian Cart installation follow the steps described in our [documentation](http://docs.jelastic.com/custom-domains)
+  **Admin panel URL:** [${env.protocol}://${env.domain}/admin/](${env.protocol}://${env.domain}/admin/)  
+  **Admin name:** admin  
+  **Admin password:** ${user.appPassword}
+  
+  To add a custom domain name for your Maian Cart installation, follow the steps described in our [documentation](https://www.virtuozzo.com/application-platform-docs/custom-domains/).
